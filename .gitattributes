@@ -1,0 +1,2 @@
+traces/**/*.npy filter=lfs diff=lfs merge=lfs -text
+*.bit filter=lfs diff=lfs merge=lfs -text
