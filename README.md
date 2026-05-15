@@ -64,8 +64,6 @@ sampling, not a sub-detection leakage signal.
 | `sca_pqc_cw305_saarinen_naive_v2_widetrig.bit` | `main_saarinen_naive_widetrig.c`  | `traces/share_recombine_n5k/cw305_saarinen_naive_v2_widetrig_set{A,B}.npy` |
 | `sca_pqc_cw305_saarinen_masked_v2_widetrig.bit`| `main_saarinen_masked_widetrig.c` | `traces/share_recombine_n5k/cw305_saarinen_masked_v2_widetrig_set{A,B}.npy`  + `traces/share_recombine_n10k/…_n10k_set{A,B}.npy` |
 
-## Sanity (reproduce headline numbers from disk)
-
 ```python
 import numpy as np
 d = np.load("reports/share_recombine_n10k/tvla_share_recombine_masked_n10k_1o_t.npz")
