@@ -1,2 +1,5 @@
 traces/**/*.npy filter=lfs diff=lfs merge=lfs -text
 *.bit filter=lfs diff=lfs merge=lfs -text
+cw305_artifacts_mlkem_sw_v1/traces/**/*.npy filter=lfs diff=lfs merge=lfs -text
+pre-silicon-mlkem-tvla/data/**/*.npy filter=lfs diff=lfs merge=lfs -text
+pre-silicon-mlkem-tvla/data/L35/net_to_pip.csv filter=lfs diff=lfs merge=lfs -text

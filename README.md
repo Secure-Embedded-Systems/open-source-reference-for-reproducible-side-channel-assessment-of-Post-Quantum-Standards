@@ -89,3 +89,14 @@ print(int(d["n_fixed"]))   # -> 10000
 - Build intermediates (.json synth output, .fasm — large, regenerable from RTL)
 - ASIC / paper-LaTeX (not CW305 artefacts)
 - Verify-window firmware mains (the `.c` source was overwritten on disk by the widetrig edits; the verify-window bitstreams ship as binaries only — reconstructable from this archive's RTL/SW by reverting `main_saarinen_{naive,masked}.c` to put `MBOX(1)=1` around `verify(c, c')` instead of around `poly_tomsg`)
+
+## Bundled artefact folders
+
+Two companion artefact trees ship alongside the 2026-05-15 snapshot above. Each is self-contained, has its own `README.md`, and reuses the same `rtl/` + `sw/` baseline.
+
+### [`cw305_artifacts_mlkem_sw_v1/`](cw305_artifacts_mlkem_sw_v1/README.md)
+CW305 silicon artefacts for the **pure-software ML-KEM-1024 baseline** (Custom-3 ISE present in fabric but never issued by the firmware — Makefile-enforced). Ships two bitstreams (KAT + widetrig), the `mlkem-sw` firmware, FIPS-203 KAT-PASS evidence with live `mcycle` cycle counts (Decap = 7,402 k cycles), and CCA-PC TVLA captures at N=1k and N=10k for the share-recombine window. This is the **SW-only positive-control point** for the three-way SW vs ISE vs ISE+DOM comparison.
+
+### [`pre-silicon-mlkem-tvla/`](pre-silicon-mlkem-tvla/README.md)
+Pre-silicon SCA evaluation framework at **two abstraction layers**: L1 (Yosys-flattened RTL, per-bit Welch-t, N=10k FvR) and L3.5 (XC7A35T routed fabric, per-PIP and per-tile Welch-t projected through Project X-Ray chipdb). Ships the L1 and L3 result NPZ/CSVs, all four CW305 bitstreams (naive/masked × FvR/widetrig), validation scripts that re-derive every paper number from the raw data, and the cross-layer leakage-attribution evidence behind Table tab:presi.
+

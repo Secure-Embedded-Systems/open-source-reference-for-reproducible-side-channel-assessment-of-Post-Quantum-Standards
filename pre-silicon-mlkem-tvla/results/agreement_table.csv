@@ -1,0 +1,4 @@
+base_reg,L1_leaky_bits,synth_xilinx_hits,routed_hits,silicon_n_above_threshold
+result_reg,32,1,32,0
+rs1_reg,32,1,572,0
+rs2_reg,32,1,130,0

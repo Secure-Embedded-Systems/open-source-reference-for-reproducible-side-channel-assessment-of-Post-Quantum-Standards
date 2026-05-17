@@ -1,0 +1,2512 @@
+{
+ "per_tile_type": [
+  {
+   "tt_idx": 0,
+   "name": "BRAM_INT_INTERFACE_L",
+   "num_bels": 2,
+   "num_wires": 304,
+   "num_pips": 26,
+   "avg_pip_max_delay_ps": 171.69230769230768,
+   "max_pip_delay_ps": 186,
+   "tc_count_top5": [
+    [
+     0,
+     24
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 1,
+   "name": "BRAM_INT_INTERFACE_R",
+   "num_bels": 2,
+   "num_wires": 304,
+   "num_pips": 26,
+   "avg_pip_max_delay_ps": 171.69230769230768,
+   "max_pip_delay_ps": 186,
+   "tc_count_top5": [
+    [
+     0,
+     24
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 2,
+   "name": "tt#94",
+   "num_bels": 74,
+   "num_wires": 3060,
+   "num_pips": 1810,
+   "avg_pip_max_delay_ps": 755.2618784530387,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     3,
+     1184
+    ],
+    [
+     5,
+     170
+    ],
+    [
+     4,
+     134
+    ],
+    [
+     6,
+     126
+    ],
+    [
+     2,
+     102
+    ]
+   ]
+  },
+  {
+   "tt_idx": 3,
+   "name": "tt#95",
+   "num_bels": 74,
+   "num_wires": 3060,
+   "num_pips": 1810,
+   "avg_pip_max_delay_ps": 755.2618784530387,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     3,
+     1184
+    ],
+    [
+     5,
+     170
+    ],
+    [
+     4,
+     134
+    ],
+    [
+     6,
+     126
+    ],
+    [
+     2,
+     102
+    ]
+   ]
+  },
+  {
+   "tt_idx": 4,
+   "name": "BRKH_BRAM",
+   "num_bels": 2,
+   "num_wires": 68,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 5,
+   "name": "BRKH_B_TERM_INT",
+   "num_bels": 2,
+   "num_wires": 122,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 6,
+   "name": "BRKH_CLB",
+   "num_bels": 2,
+   "num_wires": 8,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 7,
+   "name": "BRKH_CLK",
+   "num_bels": 2,
+   "num_wires": 132,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 8,
+   "name": "BRKH_CMT",
+   "num_bels": 2,
+   "num_wires": 13,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 9,
+   "name": "BRKH_DSP_L",
+   "num_bels": 2,
+   "num_wires": 102,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 10,
+   "name": "BRKH_DSP_R",
+   "num_bels": 2,
+   "num_wires": 102,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 11,
+   "name": "BRKH_GTX",
+   "num_bels": 2,
+   "num_wires": 16,
+   "num_pips": 14,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     3,
+     12
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 12,
+   "name": "BRKH_INT",
+   "num_bels": 2,
+   "num_wires": 265,
+   "num_pips": 16,
+   "avg_pip_max_delay_ps": 273.0,
+   "max_pip_delay_ps": 312,
+   "tc_count_top5": [
+    [
+     9,
+     14
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 13,
+   "name": "BRKH_TERM_INT",
+   "num_bels": 2,
+   "num_wires": 121,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 14,
+   "name": "B_TERM_INT",
+   "num_bels": 2,
+   "num_wires": 122,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 15,
+   "name": "CFG_CENTER_BOT",
+   "num_bels": 2,
+   "num_wires": 4418,
+   "num_pips": 15,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     3,
+     13
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 16,
+   "name": "CFG_CENTER_MID",
+   "num_bels": 12,
+   "num_wires": 5086,
+   "num_pips": 569,
+   "avg_pip_max_delay_ps": 483.41124780316346,
+   "max_pip_delay_ps": 5000,
+   "tc_count_top5": [
+    [
+     3,
+     368
+    ],
+    [
+     14,
+     64
+    ],
+    [
+     13,
+     55
+    ],
+    [
+     10,
+     44
+    ],
+    [
+     15,
+     34
+    ]
+   ]
+  },
+  {
+   "tt_idx": 17,
+   "name": "CFG_CENTER_TOP",
+   "num_bels": 4,
+   "num_wires": 2301,
+   "num_pips": 77,
+   "avg_pip_max_delay_ps": 0.7142857142857143,
+   "max_pip_delay_ps": 11,
+   "tc_count_top5": [
+    [
+     3,
+     38
+    ],
+    [
+     15,
+     32
+    ],
+    [
+     16,
+     5
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 18,
+   "name": "tt#12",
+   "num_bels": 42,
+   "num_wires": 506,
+   "num_pips": 529,
+   "avg_pip_max_delay_ps": 3687.7202268431,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     188
+    ],
+    [
+     3,
+     106
+    ],
+    [
+     18,
+     10
+    ],
+    [
+     19,
+     10
+    ],
+    [
+     20,
+     10
+    ]
+   ]
+  },
+  {
+   "tt_idx": 19,
+   "name": "tt#13",
+   "num_bels": 42,
+   "num_wires": 506,
+   "num_pips": 529,
+   "avg_pip_max_delay_ps": 3687.7202268431,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     188
+    ],
+    [
+     3,
+     106
+    ],
+    [
+     18,
+     10
+    ],
+    [
+     19,
+     10
+    ],
+    [
+     20,
+     10
+    ]
+   ]
+  },
+  {
+   "tt_idx": 20,
+   "name": "tt#14",
+   "num_bels": 42,
+   "num_wires": 526,
+   "num_pips": 550,
+   "avg_pip_max_delay_ps": 3768.072727272727,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     200
+    ],
+    [
+     3,
+     115
+    ],
+    [
+     25,
+     8
+    ],
+    [
+     50,
+     5
+    ],
+    [
+     51,
+     5
+    ]
+   ]
+  },
+  {
+   "tt_idx": 21,
+   "name": "tt#15",
+   "num_bels": 42,
+   "num_wires": 526,
+   "num_pips": 550,
+   "avg_pip_max_delay_ps": 3768.072727272727,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     200
+    ],
+    [
+     3,
+     115
+    ],
+    [
+     25,
+     8
+    ],
+    [
+     50,
+     5
+    ],
+    [
+     51,
+     5
+    ]
+   ]
+  },
+  {
+   "tt_idx": 22,
+   "name": "CLK_BUFG_BOT_R",
+   "num_bels": 130,
+   "num_wires": 1388,
+   "num_pips": 578,
+   "avg_pip_max_delay_ps": 3372.484429065744,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     192
+    ],
+    [
+     79,
+     144
+    ],
+    [
+     82,
+     96
+    ],
+    [
+     83,
+     64
+    ],
+    [
+     80,
+     32
+    ]
+   ]
+  },
+  {
+   "tt_idx": 23,
+   "name": "CLK_BUFG_REBUF",
+   "num_bels": 2,
+   "num_wires": 512,
+   "num_pips": 130,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     7,
+     128
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 24,
+   "name": "CLK_BUFG_TOP_R",
+   "num_bels": 130,
+   "num_wires": 1388,
+   "num_pips": 578,
+   "avg_pip_max_delay_ps": 3372.484429065744,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     192
+    ],
+    [
+     79,
+     144
+    ],
+    [
+     82,
+     96
+    ],
+    [
+     83,
+     64
+    ],
+    [
+     7,
+     32
+    ]
+   ]
+  },
+  {
+   "tt_idx": 25,
+   "name": "CLK_FEED",
+   "num_bels": 2,
+   "num_wires": 258,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 26,
+   "name": "CLK_HROW_BOT_R",
+   "num_bels": 50,
+   "num_wires": 2304,
+   "num_pips": 2914,
+   "avg_pip_max_delay_ps": 596.6945778997941,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     87,
+     896
+    ],
+    [
+     90,
+     768
+    ],
+    [
+     88,
+     672
+    ],
+    [
+     86,
+     256
+    ],
+    [
+     3,
+     96
+    ]
+   ]
+  },
+  {
+   "tt_idx": 27,
+   "name": "tt#289",
+   "num_bels": 50,
+   "num_wires": 2304,
+   "num_pips": 2914,
+   "avg_pip_max_delay_ps": 596.6286890871654,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     87,
+     896
+    ],
+    [
+     90,
+     768
+    ],
+    [
+     88,
+     672
+    ],
+    [
+     86,
+     256
+    ],
+    [
+     3,
+     96
+    ]
+   ]
+  },
+  {
+   "tt_idx": 28,
+   "name": "CLK_MTBF2",
+   "num_bels": 2,
+   "num_wires": 362,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 29,
+   "name": "CLK_PMV2_SVT",
+   "num_bels": 2,
+   "num_wires": 357,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 30,
+   "name": "CLK_PMV2",
+   "num_bels": 2,
+   "num_wires": 357,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 31,
+   "name": "CLK_PMVIOB",
+   "num_bels": 2,
+   "num_wires": 356,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 32,
+   "name": "CLK_PMV",
+   "num_bels": 2,
+   "num_wires": 1668,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 33,
+   "name": "CLK_TERM",
+   "num_bels": 2,
+   "num_wires": 68,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 34,
+   "name": "CMT_FIFO_L",
+   "num_bels": 2,
+   "num_wires": 2994,
+   "num_pips": 280,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     3,
+     278
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 35,
+   "name": "CMT_FIFO_R",
+   "num_bels": 2,
+   "num_wires": 2994,
+   "num_pips": 280,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     3,
+     278
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 36,
+   "name": "CMT_PMV_L",
+   "num_bels": 2,
+   "num_wires": 227,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 37,
+   "name": "CMT_PMV",
+   "num_bels": 2,
+   "num_wires": 227,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 38,
+   "name": "CMT_TOP_L_LOWER_B",
+   "num_bels": 8,
+   "num_wires": 4048,
+   "num_pips": 382,
+   "avg_pip_max_delay_ps": 318.0549738219895,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     92,
+     99
+    ],
+    [
+     7,
+     95
+    ],
+    [
+     3,
+     73
+    ],
+    [
+     93,
+     20
+    ],
+    [
+     95,
+     12
+    ]
+   ]
+  },
+  {
+   "tt_idx": 39,
+   "name": "CMT_TOP_L_LOWER_T",
+   "num_bels": 2,
+   "num_wires": 2484,
+   "num_pips": 282,
+   "avg_pip_max_delay_ps": 113.54964539007092,
+   "max_pip_delay_ps": 517,
+   "tc_count_top5": [
+    [
+     3,
+     176
+    ],
+    [
+     150,
+     16
+    ],
+    [
+     7,
+     6
+    ],
+    [
+     129,
+     5
+    ],
+    [
+     121,
+     5
+    ]
+   ]
+  },
+  {
+   "tt_idx": 40,
+   "name": "CMT_TOP_L_UPPER_B",
+   "num_bels": 2,
+   "num_wires": 3292,
+   "num_pips": 389,
+   "avg_pip_max_delay_ps": 104.57840616966581,
+   "max_pip_delay_ps": 523,
+   "tc_count_top5": [
+    [
+     3,
+     247
+    ],
+    [
+     173,
+     16
+    ],
+    [
+     151,
+     12
+    ],
+    [
+     7,
+     12
+    ],
+    [
+     130,
+     6
+    ]
+   ]
+  },
+  {
+   "tt_idx": 41,
+   "name": "CMT_TOP_L_UPPER_T",
+   "num_bels": 6,
+   "num_wires": 3326,
+   "num_pips": 322,
+   "avg_pip_max_delay_ps": 242.2826086956522,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     92,
+     90
+    ],
+    [
+     3,
+     72
+    ],
+    [
+     7,
+     64
+    ],
+    [
+     93,
+     18
+    ],
+    [
+     178,
+     12
+    ]
+   ]
+  },
+  {
+   "tt_idx": 42,
+   "name": "CMT_TOP_R_LOWER_B",
+   "num_bels": 8,
+   "num_wires": 4048,
+   "num_pips": 382,
+   "avg_pip_max_delay_ps": 318.0549738219895,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     92,
+     99
+    ],
+    [
+     7,
+     95
+    ],
+    [
+     3,
+     73
+    ],
+    [
+     93,
+     20
+    ],
+    [
+     95,
+     12
+    ]
+   ]
+  },
+  {
+   "tt_idx": 43,
+   "name": "CMT_TOP_R_LOWER_T",
+   "num_bels": 2,
+   "num_wires": 2484,
+   "num_pips": 282,
+   "avg_pip_max_delay_ps": 113.54964539007092,
+   "max_pip_delay_ps": 517,
+   "tc_count_top5": [
+    [
+     3,
+     176
+    ],
+    [
+     150,
+     16
+    ],
+    [
+     7,
+     6
+    ],
+    [
+     129,
+     5
+    ],
+    [
+     121,
+     5
+    ]
+   ]
+  },
+  {
+   "tt_idx": 44,
+   "name": "CMT_TOP_R_UPPER_B",
+   "num_bels": 2,
+   "num_wires": 3292,
+   "num_pips": 389,
+   "avg_pip_max_delay_ps": 104.57840616966581,
+   "max_pip_delay_ps": 523,
+   "tc_count_top5": [
+    [
+     3,
+     247
+    ],
+    [
+     173,
+     16
+    ],
+    [
+     151,
+     12
+    ],
+    [
+     7,
+     12
+    ],
+    [
+     130,
+     6
+    ]
+   ]
+  },
+  {
+   "tt_idx": 45,
+   "name": "CMT_TOP_R_UPPER_T",
+   "num_bels": 6,
+   "num_wires": 3326,
+   "num_pips": 322,
+   "avg_pip_max_delay_ps": 242.2826086956522,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     92,
+     90
+    ],
+    [
+     3,
+     72
+    ],
+    [
+     7,
+     64
+    ],
+    [
+     93,
+     18
+    ],
+    [
+     178,
+     12
+    ]
+   ]
+  },
+  {
+   "tt_idx": 46,
+   "name": "tt#115",
+   "num_bels": 40,
+   "num_wires": 2918,
+   "num_pips": 1702,
+   "avg_pip_max_delay_ps": 423.5217391304348,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     3,
+     794
+    ],
+    [
+     79,
+     526
+    ],
+    [
+     179,
+     196
+    ],
+    [
+     180,
+     112
+    ],
+    [
+     4,
+     72
+    ]
+   ]
+  },
+  {
+   "tt_idx": 47,
+   "name": "tt#116",
+   "num_bels": 40,
+   "num_wires": 2918,
+   "num_pips": 1702,
+   "avg_pip_max_delay_ps": 423.5217391304348,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     3,
+     794
+    ],
+    [
+     79,
+     526
+    ],
+    [
+     179,
+     196
+    ],
+    [
+     180,
+     112
+    ],
+    [
+     4,
+     72
+    ]
+   ]
+  },
+  {
+   "tt_idx": 48,
+   "name": "GTP_CHANNEL_0",
+   "num_bels": 28,
+   "num_wires": 2211,
+   "num_pips": 1141,
+   "avg_pip_max_delay_ps": 297.9859772129711,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     3,
+     1103
+    ],
+    [
+     4,
+     34
+    ],
+    [
+     181,
+     2
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 49,
+   "name": "GTP_CHANNEL_1",
+   "num_bels": 28,
+   "num_wires": 2211,
+   "num_pips": 1141,
+   "avg_pip_max_delay_ps": 297.9859772129711,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     3,
+     1103
+    ],
+    [
+     4,
+     34
+    ],
+    [
+     181,
+     2
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 50,
+   "name": "GTP_CHANNEL_2",
+   "num_bels": 28,
+   "num_wires": 2211,
+   "num_pips": 1141,
+   "avg_pip_max_delay_ps": 297.9859772129711,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     3,
+     1103
+    ],
+    [
+     4,
+     34
+    ],
+    [
+     181,
+     2
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 51,
+   "name": "GTP_CHANNEL_3",
+   "num_bels": 28,
+   "num_wires": 2211,
+   "num_pips": 1141,
+   "avg_pip_max_delay_ps": 297.9859772129711,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     3,
+     1103
+    ],
+    [
+     4,
+     34
+    ],
+    [
+     181,
+     2
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 52,
+   "name": "GTP_COMMON",
+   "num_bels": 23,
+   "num_wires": 944,
+   "num_pips": 340,
+   "avg_pip_max_delay_ps": 470.5882352941176,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     3,
+     308
+    ],
+    [
+     4,
+     16
+    ],
+    [
+     7,
+     12
+    ],
+    [
+     41,
+     2
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 53,
+   "name": "GTP_INT_INTERFACE",
+   "num_bels": 2,
+   "num_wires": 346,
+   "num_pips": 170,
+   "avg_pip_max_delay_ps": 273.6,
+   "max_pip_delay_ps": 791,
+   "tc_count_top5": [
+    [
+     182,
+     48
+    ],
+    [
+     183,
+     48
+    ],
+    [
+     7,
+     48
+    ],
+    [
+     0,
+     24
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 54,
+   "name": "HCLK_BRAM",
+   "num_bels": 2,
+   "num_wires": 105,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 55,
+   "name": "HCLK_CLB",
+   "num_bels": 2,
+   "num_wires": 46,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 56,
+   "name": "HCLK_CMT_L",
+   "num_bels": 2,
+   "num_wires": 144,
+   "num_pips": 984,
+   "avg_pip_max_delay_ps": 455.890243902439,
+   "max_pip_delay_ps": 1124,
+   "tc_count_top5": [
+    [
+     198,
+     196
+    ],
+    [
+     189,
+     168
+    ],
+    [
+     195,
+     140
+    ],
+    [
+     199,
+     112
+    ],
+    [
+     7,
+     70
+    ]
+   ]
+  },
+  {
+   "tt_idx": 57,
+   "name": "HCLK_CMT",
+   "num_bels": 2,
+   "num_wires": 164,
+   "num_pips": 984,
+   "avg_pip_max_delay_ps": 455.890243902439,
+   "max_pip_delay_ps": 1124,
+   "tc_count_top5": [
+    [
+     198,
+     196
+    ],
+    [
+     189,
+     168
+    ],
+    [
+     195,
+     140
+    ],
+    [
+     199,
+     112
+    ],
+    [
+     7,
+     70
+    ]
+   ]
+  },
+  {
+   "tt_idx": 58,
+   "name": "HCLK_DSP_L",
+   "num_bels": 2,
+   "num_wires": 132,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 59,
+   "name": "HCLK_DSP_R",
+   "num_bels": 2,
+   "num_wires": 132,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 60,
+   "name": "HCLK_FEEDTHRU_1",
+   "num_bels": 2,
+   "num_wires": 34,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 61,
+   "name": "HCLK_FEEDTHRU_2",
+   "num_bels": 2,
+   "num_wires": 34,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 62,
+   "name": "HCLK_FIFO_L",
+   "num_bels": 2,
+   "num_wires": 42,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 63,
+   "name": "HCLK_GTX",
+   "num_bels": 2,
+   "num_wires": 18,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 64,
+   "name": "HCLK_INT_INTERFACE",
+   "num_bels": 2,
+   "num_wires": 46,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 65,
+   "name": "HCLK_IOB",
+   "num_bels": 2,
+   "num_wires": 38,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 66,
+   "name": "tt#393",
+   "num_bels": 11,
+   "num_wires": 160,
+   "num_pips": 281,
+   "avg_pip_max_delay_ps": 176.95373665480426,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     7,
+     204
+    ],
+    [
+     3,
+     34
+    ],
+    [
+     202,
+     12
+    ],
+    [
+     41,
+     5
+    ],
+    [
+     4,
+     4
+    ]
+   ]
+  },
+  {
+   "tt_idx": 67,
+   "name": "HCLK_L_BOT_UTURN",
+   "num_bels": 2,
+   "num_wires": 176,
+   "num_pips": 106,
+   "avg_pip_max_delay_ps": 174.79245283018867,
+   "max_pip_delay_ps": 193,
+   "tc_count_top5": [
+    [
+     208,
+     96
+    ],
+    [
+     7,
+     8
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 68,
+   "name": "HCLK_L",
+   "num_bels": 2,
+   "num_wires": 291,
+   "num_pips": 202,
+   "avg_pip_max_delay_ps": 183.44554455445544,
+   "max_pip_delay_ps": 193,
+   "tc_count_top5": [
+    [
+     208,
+     192
+    ],
+    [
+     7,
+     8
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 69,
+   "name": "HCLK_R_BOT_UTURN",
+   "num_bels": 2,
+   "num_wires": 176,
+   "num_pips": 106,
+   "avg_pip_max_delay_ps": 174.79245283018867,
+   "max_pip_delay_ps": 193,
+   "tc_count_top5": [
+    [
+     208,
+     96
+    ],
+    [
+     7,
+     8
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 70,
+   "name": "HCLK_R",
+   "num_bels": 2,
+   "num_wires": 291,
+   "num_pips": 202,
+   "avg_pip_max_delay_ps": 183.44554455445544,
+   "max_pip_delay_ps": 193,
+   "tc_count_top5": [
+    [
+     208,
+     192
+    ],
+    [
+     7,
+     8
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 71,
+   "name": "HCLK_TERM_GTX",
+   "num_bels": 2,
+   "num_wires": 18,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 72,
+   "name": "HCLK_TERM",
+   "num_bels": 2,
+   "num_wires": 42,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 73,
+   "name": "HCLK_VBRK",
+   "num_bels": 2,
+   "num_wires": 42,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 74,
+   "name": "HCLK_VFRAME",
+   "num_bels": 2,
+   "num_wires": 34,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 75,
+   "name": "INT_FEEDTHRU_1",
+   "num_bels": 2,
+   "num_wires": 130,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 76,
+   "name": "INT_FEEDTHRU_2",
+   "num_bels": 2,
+   "num_wires": 130,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 77,
+   "name": "INT_INTERFACE_L",
+   "num_bels": 2,
+   "num_wires": 256,
+   "num_pips": 26,
+   "avg_pip_max_delay_ps": 171.69230769230768,
+   "max_pip_delay_ps": 186,
+   "tc_count_top5": [
+    [
+     0,
+     24
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 78,
+   "name": "INT_INTERFACE_R",
+   "num_bels": 2,
+   "num_wires": 256,
+   "num_pips": 26,
+   "avg_pip_max_delay_ps": 171.69230769230768,
+   "max_pip_delay_ps": 186,
+   "tc_count_top5": [
+    [
+     0,
+     24
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 79,
+   "name": "INT_L",
+   "num_bels": 2,
+   "num_wires": 604,
+   "num_pips": 3746,
+   "avg_pip_max_delay_ps": 132.42498665242925,
+   "max_pip_delay_ps": 301,
+   "tc_count_top5": [
+    [
+     212,
+     1200
+    ],
+    [
+     211,
+     400
+    ],
+    [
+     226,
+     120
+    ],
+    [
+     247,
+     100
+    ],
+    [
+     242,
+     84
+    ]
+   ]
+  },
+  {
+   "tt_idx": 80,
+   "name": "INT_R",
+   "num_bels": 2,
+   "num_wires": 604,
+   "num_pips": 3746,
+   "avg_pip_max_delay_ps": 132.42498665242925,
+   "max_pip_delay_ps": 301,
+   "tc_count_top5": [
+    [
+     212,
+     1200
+    ],
+    [
+     211,
+     400
+    ],
+    [
+     226,
+     120
+    ],
+    [
+     247,
+     100
+    ],
+    [
+     242,
+     84
+    ]
+   ]
+  },
+  {
+   "tt_idx": 81,
+   "name": "IO_INT_INTERFACE_L",
+   "num_bels": 2,
+   "num_wires": 256,
+   "num_pips": 26,
+   "avg_pip_max_delay_ps": 171.69230769230768,
+   "max_pip_delay_ps": 186,
+   "tc_count_top5": [
+    [
+     0,
+     24
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 82,
+   "name": "IO_INT_INTERFACE_R",
+   "num_bels": 2,
+   "num_wires": 256,
+   "num_pips": 26,
+   "avg_pip_max_delay_ps": 171.69230769230768,
+   "max_pip_delay_ps": 186,
+   "tc_count_top5": [
+    [
+     0,
+     24
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 83,
+   "name": "LIOB33_SING",
+   "num_bels": 16,
+   "num_wires": 165,
+   "num_pips": 20,
+   "avg_pip_max_delay_ps": 4500.1,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     9
+    ],
+    [
+     3,
+     7
+    ],
+    [
+     181,
+     2
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 84,
+   "name": "tt#128",
+   "num_bels": 64,
+   "num_wires": 340,
+   "num_pips": 83,
+   "avg_pip_max_delay_ps": 5301.277108433735,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     44
+    ],
+    [
+     3,
+     30
+    ],
+    [
+     181,
+     4
+    ],
+    [
+     256,
+     2
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 85,
+   "name": "LIOI3_SING",
+   "num_bels": 114,
+   "num_wires": 509,
+   "num_pips": 429,
+   "avg_pip_max_delay_ps": 3535.5431235431233,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     150
+    ],
+    [
+     3,
+     136
+    ],
+    [
+     262,
+     96
+    ],
+    [
+     41,
+     16
+    ],
+    [
+     261,
+     10
+    ]
+   ]
+  },
+  {
+   "tt_idx": 86,
+   "name": "LIOI3_TBYTESRC",
+   "num_bels": 226,
+   "num_wires": 1034,
+   "num_pips": 878,
+   "avg_pip_max_delay_ps": 3455.006833712984,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     300
+    ],
+    [
+     3,
+     293
+    ],
+    [
+     262,
+     192
+    ],
+    [
+     41,
+     32
+    ],
+    [
+     261,
+     20
+    ]
+   ]
+  },
+  {
+   "tt_idx": 87,
+   "name": "LIOI3_TBYTETERM",
+   "num_bels": 226,
+   "num_wires": 1034,
+   "num_pips": 876,
+   "avg_pip_max_delay_ps": 3462.89497716895,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     300
+    ],
+    [
+     3,
+     292
+    ],
+    [
+     262,
+     192
+    ],
+    [
+     41,
+     32
+    ],
+    [
+     261,
+     20
+    ]
+   ]
+  },
+  {
+   "tt_idx": 88,
+   "name": "LIOI3",
+   "num_bels": 226,
+   "num_wires": 1034,
+   "num_pips": 883,
+   "avg_pip_max_delay_ps": 3435.4428086070216,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     300
+    ],
+    [
+     3,
+     299
+    ],
+    [
+     262,
+     192
+    ],
+    [
+     41,
+     32
+    ],
+    [
+     261,
+     20
+    ]
+   ]
+  },
+  {
+   "tt_idx": 89,
+   "name": "L_TERM_INT",
+   "num_bels": 2,
+   "num_wires": 170,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 90,
+   "name": "MONITOR_BOT",
+   "num_bels": 6,
+   "num_wires": 2474,
+   "num_pips": 119,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     3,
+     117
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 91,
+   "name": "MONITOR_MID",
+   "num_bels": 2,
+   "num_wires": 2248,
+   "num_pips": 14,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     3,
+     12
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 92,
+   "name": "MONITOR_TOP",
+   "num_bels": 2,
+   "num_wires": 1144,
+   "num_pips": 10,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     3,
+     8
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 93,
+   "name": "NULL",
+   "num_bels": 2,
+   "num_wires": 5,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 94,
+   "name": "PCIE_BOT",
+   "num_bels": 3,
+   "num_wires": 10862,
+   "num_pips": 3987,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     3,
+     2785
+    ],
+    [
+     267,
+     1200
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 95,
+   "name": "PCIE_INT_INTERFACE_L",
+   "num_bels": 2,
+   "num_wires": 346,
+   "num_pips": 170,
+   "avg_pip_max_delay_ps": 273.6,
+   "max_pip_delay_ps": 791,
+   "tc_count_top5": [
+    [
+     182,
+     48
+    ],
+    [
+     183,
+     48
+    ],
+    [
+     3,
+     48
+    ],
+    [
+     0,
+     24
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 96,
+   "name": "PCIE_INT_INTERFACE_R",
+   "num_bels": 2,
+   "num_wires": 346,
+   "num_pips": 170,
+   "avg_pip_max_delay_ps": 273.6,
+   "max_pip_delay_ps": 791,
+   "tc_count_top5": [
+    [
+     182,
+     48
+    ],
+    [
+     183,
+     48
+    ],
+    [
+     3,
+     48
+    ],
+    [
+     0,
+     24
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 97,
+   "name": "PCIE_NULL",
+   "num_bels": 2,
+   "num_wires": 5,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 98,
+   "name": "PCIE_TOP",
+   "num_bels": 2,
+   "num_wires": 2041,
+   "num_pips": 443,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     3,
+     441
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 99,
+   "name": "RIOB33_SING",
+   "num_bels": 16,
+   "num_wires": 165,
+   "num_pips": 20,
+   "avg_pip_max_delay_ps": 4500.1,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     9
+    ],
+    [
+     3,
+     7
+    ],
+    [
+     181,
+     2
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 100,
+   "name": "tt#129",
+   "num_bels": 64,
+   "num_wires": 340,
+   "num_pips": 82,
+   "avg_pip_max_delay_ps": 5365.914634146341,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     44
+    ],
+    [
+     3,
+     30
+    ],
+    [
+     181,
+     4
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     256,
+     1
+    ]
+   ]
+  },
+  {
+   "tt_idx": 101,
+   "name": "RIOI3_SING",
+   "num_bels": 114,
+   "num_wires": 509,
+   "num_pips": 429,
+   "avg_pip_max_delay_ps": 3535.5431235431233,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     150
+    ],
+    [
+     3,
+     136
+    ],
+    [
+     262,
+     96
+    ],
+    [
+     41,
+     16
+    ],
+    [
+     261,
+     10
+    ]
+   ]
+  },
+  {
+   "tt_idx": 102,
+   "name": "RIOI3_TBYTESRC",
+   "num_bels": 226,
+   "num_wires": 1034,
+   "num_pips": 878,
+   "avg_pip_max_delay_ps": 3456.7972665148063,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     300
+    ],
+    [
+     3,
+     289
+    ],
+    [
+     262,
+     192
+    ],
+    [
+     41,
+     32
+    ],
+    [
+     258,
+     20
+    ]
+   ]
+  },
+  {
+   "tt_idx": 103,
+   "name": "RIOI3_TBYTETERM",
+   "num_bels": 226,
+   "num_wires": 1034,
+   "num_pips": 876,
+   "avg_pip_max_delay_ps": 3464.689497716895,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     300
+    ],
+    [
+     3,
+     288
+    ],
+    [
+     262,
+     192
+    ],
+    [
+     41,
+     32
+    ],
+    [
+     258,
+     20
+    ]
+   ]
+  },
+  {
+   "tt_idx": 104,
+   "name": "RIOI3",
+   "num_bels": 226,
+   "num_wires": 1034,
+   "num_pips": 883,
+   "avg_pip_max_delay_ps": 3437.2231030577577,
+   "max_pip_delay_ps": 10000,
+   "tc_count_top5": [
+    [
+     4,
+     300
+    ],
+    [
+     3,
+     295
+    ],
+    [
+     262,
+     192
+    ],
+    [
+     41,
+     32
+    ],
+    [
+     258,
+     20
+    ]
+   ]
+  },
+  {
+   "tt_idx": 105,
+   "name": "R_TERM_INT_GTX",
+   "num_bels": 2,
+   "num_wires": 158,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 106,
+   "name": "R_TERM_INT",
+   "num_bels": 2,
+   "num_wires": 170,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 107,
+   "name": "TERM_CMT",
+   "num_bels": 2,
+   "num_wires": 8,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 108,
+   "name": "T_TERM_INT",
+   "num_bels": 2,
+   "num_wires": 121,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 109,
+   "name": "VBRK_EXT",
+   "num_bels": 2,
+   "num_wires": 96,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 110,
+   "name": "VBRK",
+   "num_bels": 2,
+   "num_wires": 130,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "tt_idx": 111,
+   "name": "VFRAME",
+   "num_bels": 2,
+   "num_wires": 226,
+   "num_pips": 2,
+   "avg_pip_max_delay_ps": 0.0,
+   "max_pip_delay_ps": 0,
+   "tc_count_top5": [
+    [
+     1,
+     2
+    ]
+   ]
+  }
+ ]
+}

@@ -1,0 +1,139 @@
+# TOOLCHAIN_PIN.txt
+# Exact SHAs / versions of every open-source tool used to produce the
+# shipped CW305 bitstreams and the L1 + L3.5 pre-silicon artefacts in
+# this folder.  An external reviewer reproducing the headline numbers
+# (silicon |t| = 3.10σ masked, 71.55σ naive; L1 96/336 bits leak; L3.5
+# 14,951 PIPs / 1,671 INT tiles) should pin against these exact SHAs.
+#
+# Why pinned?  Without these pins, "open-source" is "open and
+# unreproducible".  Pinning is mandatory for the (e) reproducibility
+# claim to be defensible.
+
+# ====================================================================
+# Synthesis: yosys + yosys-slang
+# ====================================================================
+yosys
+    version: 0.65+7
+    git_sha: 2046a23a2
+    build:   clang++ 18.1.8 -fPIC -O3
+    binary:  ${HOME}/oss-cad-suite/bin/yosys
+    upstream: https://github.com/YosysHQ/yosys
+    license: ISC
+    plugin_dir: ${HOME}/oss-cad-suite/share/yosys/plugins/
+
+yosys-slang
+    plugin:   slang.so
+    location: ${HOME}/oss-cad-suite/share/yosys/plugins/slang.so
+    upstream: https://github.com/povik/yosys-slang
+    license:  ISC
+    notes:    shipped with this oss-cad-suite build; version is the
+              one bundled with yosys 0.65+7 / 2046a23a2.
+
+# ====================================================================
+# Place & route: nextpnr-xilinx
+# ====================================================================
+nextpnr-xilinx
+    version: 3f71a73
+    git_sha: 3f71a737e283bdfd8dcb2509a20d0b0bcab28210
+    commit_subject: "Merge pull request #86 from parker-research/fix-syntaxwarning-regex-2"
+    binary:  ${NEXTPNR_XILINX_ROOT}/build/nextpnr-xilinx
+    upstream: https://github.com/openXC7/nextpnr-xilinx
+    license: MIT/BSD-style (nextpnr core: ISC; xilinx flow: MIT)
+    invocation flags:
+        --chipdb xc7a35t_ftg256.bin
+        --freq 20
+        --timing-allow-fail
+        --ignore-loops
+        --seed 42
+
+# ====================================================================
+# Chipdb: prjxray / prjxray-db
+# ====================================================================
+prjxray
+    git_sha: c9f02d8576042325425824647ab5555b1bc77833
+    commit_subject: "Merge pull request #2550 from openXC7/oserdes-datawidths"
+    location: ${HOME}/prjxray/
+    upstream: https://github.com/openXC7/prjxray
+    license: ISC
+    binaries used by build:
+        xc7frames2bit (build_ssd/tools/xc7frames2bit)
+
+prjxray-db (chipdb sources)
+    git_sha: 381966a746cb4cf4a7f854f0e53caa3bf74fbe62
+    commit_subject: "add DATA_WIDTHS W10 and W14 for OSERDESE2..."
+    location: ${NEXTPNR_XILINX_ROOT}/xilinx/external/prjxray-db
+    upstream: https://github.com/f4pga/prjxray-db
+    license:  ISC, with the SymbiFlow/F4PGA clean-room reverse-engineering
+              position documented at https://github.com/f4pga/prjxray
+    notes:    NEVER redistribute xc7a35t.bin directly with the paper
+              artefact.  Reviewers should regenerate it from this
+              prjxray-db SHA via the upstream chipdb-build target.
+
+# ====================================================================
+# fasm2frames
+# ====================================================================
+fasm2frames
+    type: python tool from prjxray
+    upstream: bundled in prjxray repo (above SHA)
+    invocation: fasm2frames --part xc7a35tftg256-2 --db-root <prjxray-db>
+
+# ====================================================================
+# Target FPGA part
+# ====================================================================
+part: xc7a35tftg256-2
+device: Xilinx Artix-7 XC7A35T-2FTG256 (CW305 daughter-board)
+
+# ====================================================================
+# Silicon-side capture
+# ====================================================================
+chipwhisperer
+    upstream: https://github.com/newaetech/chipwhisperer
+    license:  GPLv3 (software), CERN-OHL-S 2.0 (hardware)
+    scope:    ChipWhisperer-Lite
+    settings: 64 MHz ADC, 4× oversample over 16 MHz design clock,
+              presamples=250, samples=6000, gain 25 dB
+    capture scripts:
+        cw305_artifacts_2026-05-15/scripts/capture_cw305_saarinen.py
+        cw305_artifacts_mlkem_sw_v1/scripts/capture_cw305_saarinen.py
+
+# ====================================================================
+# Firmware toolchain
+# ====================================================================
+riscv toolchain
+    cc:        riscv64-unknown-elf-gcc
+    abi:       -march=rv32imc -mabi=ilp32
+    flags:     -O2 -nostdlib -ffreestanding -ffunction-sections -fdata-sections
+    used for:  building firmware.bin / firmware.elf / firmware_bram_init.hex
+
+# ====================================================================
+# TVLA analysis (post-capture)
+# ====================================================================
+welch_t analysis
+    scripts:
+        pre-silicon-mlkem-tvla/scripts/silicon/validate_silicon_ccapc.py
+        pre-silicon-mlkem-tvla/scripts/L1/validate_L1.py
+        pre-silicon-mlkem-tvla/scripts/L35/validate_L35.py
+        pre-silicon-mlkem-tvla/scripts/L35/enumerate_leaky_pips_full.py
+    pythondeps:
+        numpy
+        scipy.stats
+    methodology: Welch's t-test, sample-by-sample, post-trigger max|t[250:]|
+                 (silicon) or per (FF, cycle, bit) (L1) or per (cycle, tile) (L3.5)
+    thresholds:  4.5σ (TVLA convention) or Bonferroni-corrected α=1e-5
+                 (~5.85σ for L1, ~6.51σ when n_comparisons=134,400)
+
+# ====================================================================
+# Bitstream-provenance verification
+# ====================================================================
+# Shipped masked v2 fvr .bit SHA-256:
+# c593a2f868504f658e0f8a2b242595753d26d17874160e515d98da280be94816
+#
+# Open-flow rebuild SHA-256 (integration/build/):
+# c593a2f868504f658e0f8a2b242595753d26d17874160e515d98da280be94816
+# (matches; verified 2026-05-17)
+#
+# See BITSTREAM_PROVENANCE.md for the full audit.
+
+Path placeholders used in this document:
+  ${NEXTPNR_XILINX_ROOT} - root of the nextpnr-xilinx build tree
+  ${HOME}                - user home directory

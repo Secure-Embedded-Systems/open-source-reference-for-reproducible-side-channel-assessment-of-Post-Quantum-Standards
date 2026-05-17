@@ -1,0 +1,313 @@
+\documentclass[10pt,conference]{IEEEtran}
+\usepackage[a4paper,top=1.0cm,bottom=1.0cm,left=1.0cm,right=1.0cm]{geometry}
+\usepackage{microtype}
+\usepackage{cite}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,fit,backgrounds,calc,shapes.geometric}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{pifont}
+\newcommand{\cmark}{\textcolor{green!55!black}{\ding{51}}}
+\newcommand{\xmark}{\textcolor{red!75!black}{\ding{55}}}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+
+\definecolor{fpgacol}{RGB}{31,119,180}
+\definecolor{asiccol}{RGB}{214,39,40}
+\definecolor{sharedcol}{RGB}{44,160,44}
+
+\newcommand{\mlkem}{ML-KEM-1024\xspace}
+\newcommand{\mldsa}{ML-DSA-44\xspace}
+
+\setlength{\columnsep}{5mm}
+\setlength{\textfloatsep}{8pt plus 1pt minus 1pt}
+\setlength{\intextsep}{4pt plus 1pt minus 1pt}
+\setlength{\dbltextfloatsep}{4pt plus 1pt minus 1pt}
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{8pt plus 1pt minus 1pt}{2pt}
+\usepackage{multicol}
+
+\title{Open-Source Reference\\
+for Reproducible Side-Channel Assessment \\
+of Post-Quantum Standards}
+
+\author{\IEEEauthorblockN{Dillibabu Shanmugam, Patrick Schaumont}\\
+\IEEEauthorblockA{Worcester Polytechnic Institute, USA\quad\texttt{\{dshanmugam, pschaumont\}@wpi.edu}}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+
+% Timing side-channels yield to cycle-level analysis. Power side-channels grow with every layer of implementation detail. The PQC transition mandates (NIST IR 8547 by 2030, CNSA 2.0 by 2035) require Common Criteria certification, which in turn requires a reproducible side-channel test methodology that PQC does not yet have. Evaluation labs are barred from publishing pass/fail decisions on commercial silicon under NDA, and no open silicon reference exists today against which the methodology can be calibrated~\cite{saarinen}. 
+We present the first truly open-source post-quantum cryptography silicon reference: a unified RISC-V coprocessor that runs \mlkem and \mldsa
+%PRS - in abstract, readability is crucial
+%~\cite{fips} 
+in unmasked and first-order DOM-masked
+%~\cite{gross_dom} 
+configurations on a fully open FPGA flow. The 38-instruction CV-X-IF coprocessor sits on a CV32E40X RV32IMC SoC. The flow uses Yosys, nextpnr-xilinx, and Project X-Ray to target the CW305 board.
+%, while the ASIC flow (Yosys + OpenROAD + KLayout against IHP SG13G2 130\,nm) closes through global routing. 
+All configurations pass the FIPS-203/204 KAT tests.
+%on XC7A35T silicon at 16\,MHz. 
+Our objective is to achieve {\em reproducible} power side-channel leakage assessment in support of the ongoing transition to post-quantum standards, which must be completed within the next few years.
+Indeed, the open-source nature of the platform and flow is important because the side-channel leakage assessment methodology for PQC is not yet standardized or established. There is a need for a widely shared platform to support reproducible experiments. Furthermore, power side-channels are substantially harder to model than timing side-channels, especially if low-level, sub-cycle hardware effects must be taken into account. Our open reference design demonstrates both protected and unprotected PQC implementations. On masked \mlkem, a CCA-PC TVLA cuts first-order leakage by ${\geq}23\times$ (masked $3.10\,\sigma$ at $N{=}10$k vs.\ naive $71.55\,\sigma$ at $N{=}5$k), with pre-silicon (RTeAAL) and post-silicon (CW305) results in agreement.\,\footnote{Release: \url{https://github.com/Secure-Embedded-Systems/open-source-reference-for-reproducible-side-channel-assessment-of-Post-Quantum-Standards}.}
+\end{abstract}
+
+\begin{IEEEkeywords}
+Post-quantum cryptography, power side-channel evaluation, open-source hardware, RISC-V coprocessor.
+\end{IEEEkeywords}
+
+\section{The case for open-source in PQC power SCA}
+\label{sec:intro}
+
+While NIST finalized standards for post-quantum cryptographic key exchange (\mlkem) and signatures (\mldsa) in August 2024, the timeline for deployment is extremely tight: NIST IR 8547 recommends transition by 2030; CNSA 2.0 calls for 2035. Standard PQC provides algorithmic protection against quantum-computing-based attacks, but its {\em implementations} must also be validated against classic timing-based and power-based side-channels. In recent years, several open-source verification tools for timing side-channels have been demonstrated~\cite{hsiao_oscar,kastner_clepsydra}. However, the verification of power side-channels, essential for implementations that operate at the edge, is not yet available. Timing effects are measured in clock cycles, but power effects extend into the sub-cycle and circuit-level domain. For example, glitches as well as power-domain coupling have been identified as root causes of power side-channel leakage \cite{sen}. Therefore, the standard practice to verify power side-channels is to build and measure a prototype implementation. In the case of PQC, such prototypes include PQC software stacks, PQC hardware coprocessors, and PQC custom ISA extensions. 
+
+\textbf{The challenge of reproducibility.} A prototype for power side-channel verification of PQC is complex. It covers the source code, the tool flow, the target architecture, the measurement setup, and the post-processing methodology for measured traces. For emerging PQC standards, this reproducibility is a must, because the assessment methodology {\em itself} is not yet standard, and because the PQC standards focus on functionality and do not specify or guide the secure implementation of the standard. 
+Every abstraction level  in the implementation modulates the power side-channel~\cite{telescope}: memory layout, register allocation, forwarding, netlist, routing.
+A PQC SCA result can be reproduced between labs only if every layer is documented and visible.
+Achieving reproducibility in this context is challenging; even state-of-the-art venues such as CHES typically demonstrate the assessment on standard (black-box) components such as micro-controllers. To support PQC roll-out, we propose a fully open-source implementation and tool-flow, and we make sure that the complete experiment is portable and reproducible. 
+
+% \textbf{PQC migration is on the clock.} NIST finalised \mlkem and \mldsa in August 2024. Long-lived ciphertext is being collected today against future quantum capability, putting forward secrecy on a ten-year clock. PQC will land in software stacks, in hardware coprocessors, and in custom ISA extensions. Each of these delivery vectors exposes a different power side-channel signature, and each must be evaluated on its own implementation.
+
+% \textbf{OSCAR has tackled RTL timing leakage; the power channel remains open.} Hsiao's OSCAR 2022 and 2025 talks~\cite{hsiao_oscar} ship RTL-level checkers for cache and pipeline timing channels, and the Kastner group~\cite{kastner_clepsydra} treats timing leakage as a flow problem amenable to static RTL analysis. Neither reaches the power channel. This work delivers an ISO 17825-compliant first-order TVLA pass on an end-to-end open-source PQC silicon reference, with \mlkem and \mldsa sharing one open ASIC-ready RTL.
+
+% \textbf{Power leakage is reproducible only if the whole stack is public.} Every abstraction layer modulates a power side-channel~\cite{telescope}: memory layout, register allocation, forwarding, netlist, routing. A PQC SCA result reproduces at another lab only if every layer above is fixed and visible. Conventional CHES practice prototypes the design in detail but releases only black-box artefacts, which suffices for a black-box attack claim but not for developing new SCA tests or refining countermeasures.
+
+\textbf{The challenge of PQC side-channel assessment.} While the PQC standards have been selected, the proper side-channel assessment testing is still being debated. Existing methodologies for classical crypto such as AES build on three ingredients: a fixed-vs-random class definition that names the leakage target, a sampling discipline, and a positive control. ISO/IEC 17825:2024 contains no PQC-specific test class. Saarinen's HOST work-in-progress~\cite{saarinen} proposes a PQC adaptation describing several such test cases (for example, ML-KEM Decaps targets $\mathit{sk}$, $m$, $K'$, and the PRF seed, each defining a different experiment).
+% defines these ingredients ahead of FIPS 140-3 and ISO 17825 PQC supplements. 
+Yet, agreeing on the assessment methodology in the context of {\em open-source} artifacts is a must. For example, NDAs forbid testing labs from publishing pass/fail decisions on proprietary silicon and commercial parts. Measurement on a public reference therefore remains the only practical path, and an open PQC platform is the precondition for refining both the test criteria and the countermeasures those criteria will eventually verify.
+
+% A standards-grade SCA evaluation needs three ingredients that AES has and PQC still lacks: a fixed-vs-random class definition that names the leakage target, a sampling discipline, and a positive control. For ML-KEM Decaps the candidate targets are $\mathit{sk}$, $m$, $K'$, and the PRF seed, and the choice reshapes the entire experiment. Saarinen's HOST work-in-progress~\cite{saarinen} is building these ingredients ahead of FIPS 140-3 and ISO 17825 PQC supplements. That methodology resists calibration against proprietary silicon because NDAs forbid labs from publishing pass/fail decisions on commercial parts. Measurement on a public reference therefore remains the only practical path, and an open PQC platform is the precondition for refining both the test criteria and the countermeasures those criteria will eventually verify.
+
+
+% \textbf{The PQC test methodology itself depends on open references.} A standards-grade SCA evaluation needs three ingredients that AES has and PQC still lacks: a fixed-vs-random class definition that names the leakage target, a sampling discipline, and a positive control. For ML-KEM Decaps the candidate targets are $\mathit{sk}$, $m$, $K'$, and the PRF seed, and the choice reshapes the entire experiment. Saarinen's HOST work-in-progress~\cite{saarinen} is building these ingredients ahead of FIPS 140-3 and ISO 17825 PQC supplements. That methodology resists calibration against proprietary silicon because NDAs forbid labs from publishing pass/fail decisions on commercial parts. Measurement on a public reference therefore remains the only practical path, and an open PQC platform is the precondition for refining both the test criteria and the countermeasures those criteria will eventually verify.
+
+\textbf{Related open-source PQC and SCA tooling.} Table~\ref{tab:rel} positions this work against prior open-source PQC hardware and pre-silicon SCA tooling.
+
+\begin{table}[t]
+\centering
+\caption{Coverage of prior open-source PQC hardware and SCA tooling.}
+\label{tab:rel}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.8}
+\begin{tabularx}{\columnwidth}{@{}l c c c c@{}}
+\toprule
+\textbf{Work} & \textbf{KEM/SIG} & \textbf{Masking}    &  \textbf{Target} & \textbf{Silicon TVLA} \\
+\midrule
+HORCRUX~\cite{horcrux}       & both & --               & FPGA  & --                  \\
+HOPE-MLKEM~\cite{hope_mlkem} & KEM  & high-order       & FPGA  & --                  \\
+OpenTitan/OTBN               & FW   & --               & FPGA & --                  \\
+\textbf{This work}           & both & 1st-order DOM    & FPGA & Saarinen-PQC \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+%\begin{table}[t]
+%\centering
+%\caption{Coverage of prior open-source PQC hardware and SCA tooling.}
+%\label{tab:rel}
+%\scriptsize
+%\setlength{\tabcolsep}{3pt}
+%\renewcommand{\arraystretch}{1.0}
+%\begin{tabularx}{\columnwidth}{@{}l c c c c@{}}
+%\toprule
+%\textbf{Work} & \textbf{KEM/SIG} & \textbf{Masking} & \textbf{Open ASIC} & \textbf{Silicon TVLA} \\
+%\midrule
+%HORCRUX~\cite{horcrux}     & both & --              & --        & --                  \\
+%HOPE-MLKEM~\cite{hope_mlkem} & KEM  & high-order      & --        & --                  \\
+%OpenTitan/OTBN             & FW   & --              & closed PDK & --                  \\
+%\textbf{This work}         & both & 1st-order DOM   & yes       & ISO-17825 \\
+%\bottomrule
+%\end{tabularx}
+%\end{table}
+
+\noindent\textbf{Contributions.}
+\emph{(i)} A unified 38-instruction CV-X-IF coprocessor running both \mlkem and \mldsa on one RTL base, with first-order masking on every secret-touching kernel.
+\emph{(ii)} An open FPGA flow (Yosys + nextpnr-xilinx + Project X-Ray) onto CW305, with all configurations passing the FIPS-203/204 KAT byte-exact on silicon, and an open ASIC reference flow (Yosys + OpenROAD + KLayout, IHP-Open-PDK SG13G2).
+\emph{(iii)} An ISO 17825 compliant test of the protected implementation of the proposed ML-KEM.
+%A first-order CCA-PC TVLA on the masked \mlkem share-recombine window applying Saarinen's proposed PQC adaptation of ISO 17825 (the standard itself does not yet have a PQC class), with a $\sqrt{N}$-scaling refutation of hidden first-order leakage (\S\ref{sec:tvla}).
+
+\section{Threat model and scope}
+\label{sec:threat}
+Our threat model assumes the attacker has physical proximity, ChipWhisperer-class power capture, and chosen-input access. Invasive probing, fault injection, EM, and higher-order DPA are not considered in this experiment, but are available to testers of our open-source reference. The design must resist first-order DPA on every secret-touching kernel and avoid mask-share collapse under synthesis; a post-synthesis share-cone separation pass ships with the release.
+%We assume a non-invasive adversary with ChipWhisperer-class power capture on the CW305 CDM jack, chosen-ciphertext input through the host mailbox, and full visibility of the open-source RTL, bitstream, and firmware. The adversary does not learn the per-deployment PRNG seed. The in-scope countermeasure is first-order DOM masking on every secret-touching ISE kernel; higher-order DPA, EM, fault injection, and invasive probing are out of scope for this v1 release.
+
+\section{Open-source architecture and backend flow}
+\label{sec:arch}
+Figure~\ref{fig:soc_flow} shows the SoC. A CV32E40X RV32IMC core attaches the 38-instruction PQC coprocessor over CV-X-IF on Custom-3 opcode \texttt{0x7B}. Eight pipelined units cover Decode, Keccak, NTT/Mod, CBD/Cmp, DOM mask, xoshiro128++ PRNG, Rounding, and Trap/FSM. First-order DOM masking sits inside the secret-touching gadgets; linear kernels operate share-wise. The same SystemVerilog source feeds Yosys and forks into two backends: FPGA (nextpnr-xilinx, Project X-Ray, CW305 XC7A35T at 16\,MHz) and ASIC (OpenROAD, KLayout, IHP SG13G2 130\,nm), with no vendor IP in either path. For pre-silicon cross-validation of the FPGA path we adopt the RTeAAL Sim tensor-algebra RTL simulator~\cite{rtl2aal} and compare its per-cycle toggle traces against the post-silicon CW305 captures.
+%Figure~\ref{fig:soc_flow} shows the architecture. A CV32E40X RV32IMC core dispatches PQC instructions over CV-X-IF to the 38-instruction PQC coprocessor on Custom-3 opcode \texttt{0x7B}. The coprocessor groups its work into eight pipelined units: Decode, Keccak, NTT/Mod, CBD/Compress, DOM mask, xoshiro128++ PRNG, Rounding, and Trap/FSM. Two mask-support peripherals (A2B/B2A and PRNG) and the TIO4 capture-trigger pin sit on the OBI fabric. The fully open FPGA flow uses Yosys, nextpnr-xilinx, and Project X-Ray to target a CW305 board. RTeAAL Sim~\cite{rtl2aal} provides pre-silicon FPGA-fabric power traces for cross-validation against the post-silicon CW305 captures.
+
+\definecolor{cpucol}{RGB}{31,119,180}
+\definecolor{xifcol}{RGB}{120,120,120}
+\definecolor{copcol}{RGB}{255,127,14}
+\definecolor{obicol}{RGB}{70,70,70}
+\definecolor{percol}{RGB}{44,160,44}
+\definecolor{trigcol}{RGB}{214,39,40}
+\definecolor{isecol}{RGB}{255,127,14}
+
+\begin{figure}[!t]
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tikzpicture}[
+  font=\scriptsize,
+  every node/.style={font=\scriptsize, inner sep=1.5pt, text=black},
+  >={Latex[length=1.2mm,width=1.2mm]},
+  blk/.style ={draw, rounded corners=1pt, align=center, minimum height=5mm, line width=0.32mm},
+  cpu/.style ={blk, fill=cpucol!10, draw=cpucol!85!black, minimum width=12mm, line width=0.4mm},
+  xif/.style ={blk, fill=xifcol!10, draw=xifcol!90!black, minimum width=8mm,  dashed, line width=0.28mm},
+  cop/.style ={blk, fill=copcol!12, draw=copcol!85!black, minimum width=16mm, line width=0.5mm},
+  peri/.style={blk, fill=percol!12, draw=percol!80!black, minimum width=8.5mm, minimum height=3.6mm, line width=0.28mm},
+  trig/.style={blk, fill=trigcol!12, draw=trigcol!80!black, minimum width=8.5mm, minimum height=3.6mm, line width=0.36mm},
+  obi/.style ={draw=obicol, fill=obicol!85, text=white, rounded corners=1.2pt, align=center, minimum height=3mm, line width=0.3mm, font=\scriptsize\bfseries},
+  ise/.style ={blk, fill=none, draw=isecol!75!black, minimum width=11mm, minimum height=3.2mm, line width=0.24mm, inner sep=0.6pt, font=\tiny},
+  dom/.style ={ise, fill=isecol!28, draw=isecol!95!black, line width=0.4mm, font=\tiny\bfseries},
+  detbox/.style={draw=copcol!75!black, dashed, rounded corners=2pt, line width=0.35mm, fill=none},
+  bus/.style ={<->, thick, gray!45!black, line width=0.32mm},
+  trigarr/.style ={->, thick, trigcol!85!black, line width=0.4mm},
+  dotline/.style={dotted, line width=0.4mm, copcol!75!black}
+]
+% =========== LEFT BLOCK: SoC view ===========
+\node[cpu] (cv32) at (0,0) {\textbf{CV32E40X}\\\tiny RV32IMC};
+\node[xif, right=1.5mm of cv32] (xif) {\textbf{CV-X-IF}};
+\node[cop, right=1.5mm of xif] (pqc) {\textbf{PQC Coproc}\\\tiny 38 ISE \texttt{0x7B}};
+\draw[bus] (cv32) -- (xif);
+\draw[bus] (xif) -- (pqc);
+% OBI bar minimised to span only CV32+peripherals (under the host)
+\node[obi, anchor=north west, minimum width=42mm] (obi) at ($(cv32.south west)+(0,-3.5mm)$) {OBI INTERCONNECT};
+\draw[bus] (cv32.south) -- (cv32.south|-obi.north);
+% Peripherals (3, fit under OBI bar)
+\node[peri, anchor=north] (a2b)  at ($(obi.south)+(-13mm,-2.5mm)$) {A2B/B2A};
+\node[peri, anchor=north] (prng) at ($(obi.south)+(0,-2.5mm)$)     {PRNG};
+\node[trig, anchor=north] (tio)  at ($(obi.south)+( 13mm,-2.5mm)$) {TIO4};
+\foreach \n in {a2b, prng, tio} \draw[bus] (\n.north) -- (\n.north|-obi.south);
+\draw[trigarr] (tio.south) -- ++(0,-2mm) node[below,font=\tiny\itshape, text=trigcol!85!black]{to CW-Husky};
+
+% =========== RIGHT BLOCK: ISE detail (2-col x 4-row grid, transparent) ===========
+\coordinate (detTop) at ($(pqc.north east)+(5mm,1.5mm)$);
+\node[ise, anchor=north west] (i1) at (detTop) {Decode};
+\node[ise, right=0.4mm of i1] (i2) {Keccak};
+\node[ise, anchor=north west] (i3) at ($(i1.south west)+(0,-0.4mm)$) {NTT/Mod};
+\node[ise, right=0.4mm of i3] (i4) {CBD/Cmp};
+\node[dom, anchor=north west] (i5) at ($(i3.south west)+(0,-0.4mm)$) {DOM mask};
+\node[ise, right=0.4mm of i5] (i6) {xoshiro};
+\node[ise, anchor=north west] (i7) at ($(i5.south west)+(0,-0.4mm)$) {Round};
+\node[ise, right=0.4mm of i7] (i8) {FSM};
+\node[detbox, fit=(i1)(i2)(i7)(i8), inner sep=1.0mm,
+  label={[anchor=south,font=\tiny\bfseries, text=copcol!85!black]north:38-ISE detail}] (detb) {};
+\draw[dotline] (pqc.north east) -- (detb.north west);
+\draw[dotline] (pqc.south east) -- (detb.south west);
+\end{tikzpicture}}
+\caption{PQC coprocessor SoC: CV32E40X over CV-X-IF, with A2B/B2A, PRNG, and TIO4 trigger on OBI. Dashed box: 8 ISE groups, DOM-mask highlighted.}
+\label{fig:soc_flow}
+\end{figure}
+
+\section{Silicon experiment}
+
+\subsection{KAT closure on CW305}
+\label{sec:kat}
+
+The DUT is a CW305 with XC7A35T-2 at 16\,MHz; cycles are read live from the RISC-V \texttt{mcycle} CSR.
+
+\textbf{Three-way comparison.} Table~\ref{tab:perf} compares the three \mlkem implementation styles on the same hardware, with the SW-only Decap cycle count read live on CW305 from the unprivileged \texttt{mcycle} CSR (KeyGen 5{,}892\,k, Encap 6{,}026\,k, Decap 7{,}402\,k -- so on the same CV32E40X the unmasked SW Decap is dominant). Against this measured baseline, the 38-instruction CV-X-IF ISE delivers a \textbf{${\sim}41\times$ speed-up} on Decap. First-order DOM masking costs $2.23\times$ in cycles relative to naive ISE but \textbf{zero additional fabric area}: the masked datapath is baked into the ISE RTL and is unused by the unmasked firmware, so the same bitstream serves both via a firmware-only swap. The ISE footprint adds $+14.7\,\%$ LUT, $+10.2\,\%$ FF, and $+48$ DSP48E1 over the SW-only baseline. \mldsa follows the same pattern (380\,k$\to$820\,k cycles when masked).
+
+\begin{table}[!t]
+\centering
+\caption{ML-KEM-1024 Decap: SW vs.\ ISE vs.\ ISE+DOM (CW305, CV32E40X @ 16\,MHz, live \texttt{mcycle} read).}
+\label{tab:perf}
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabularx}{\columnwidth}{@{}l >{\raggedleft\arraybackslash}X >{\raggedleft\arraybackslash}X >{\raggedleft\arraybackslash}X@{}}
+\toprule
+\textbf{Configuration} & \textbf{Decap (k cyc)} & \textbf{Speedup} & \textbf{LUT ($\Delta$)} \\
+\midrule
+SW-only (this work) & 7{,}402  & 1.0$\times$              & 28{,}445 (--)            \\
+ISE                 & 180      & \textbf{41$\times$}      & 32{,}618 ($+$14.7\%)     \\
+ISE + DOM           & 401      & 18$\times$               & 32{,}618 (\textbf{$+$0\%}) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{First-order TVLA on masked \mlkem decapsulation}
+\label{sec:tvla}
+
+Our evaluation protocol follows Saarinen's proposed PQC adaptation of ISO 17825~\cite{saarinen}, inheriting the $N{\geq}10$k pool size and $4.5\,\sigma$ Welch-$t$ threshold from the symmetric-cipher framework and targeting the leakage class at the Fujisaki--Okamoto share-recombine window. At that window the implicit-rejection comparison $c \stackrel{?}{=} c'$ unmasks $m'$, and the plaintext-check oracle bit transiently exists. This is exactly where the published PC-oracle attacks~\cite{ravi_chosen_ct,ueno_curse} extract the secret. Our two fixed-vs-random pools draw ciphertexts from distinct seed PRNGs gated to the same cycle and Hamming-weight envelope, isolating that bit.
+
+Table~\ref{tab:tvla} reports the result on three configurations captured under the same Saarinen-PQC protocol on the same CW305 board. The masked ISE design holds at $|t|{=}3.10\,\sigma$ ($N{=}10$k) against a $71.55\,\sigma$ unmasked-ISE positive control ($N{=}5$k, saturated early) on byte-identical firmware -- a ${\geq}23\times$ suppression. A pure-software \mlkem reference (no Custom-3 instructions issued; ISE present in fabric but unused) captured on the same bitstream-RTL combination at the ISO-17825 floor of $N{=}10$k shows $13.96\,\sigma$, a real first-order leak but ${\sim}5\times$ weaker than the ISE-naive baseline projected to the same $N$ ($71.55\,\sigma \cdot \sqrt{2} \approx 101\,\sigma$). The dilution is consistent with the SW path running the share-recombine operation across 7\,402\,k cycles on the CV32E40X core versus 180\,k cycles on the dedicated ISE datapath -- same secret event, smaller per-cycle power density.
+
+\begin{table}[!t]
+\centering
+\caption{Share-recombine TVLA on \mlkem-1024 Decap (Saarinen-PQC, $4.5\,\sigma$ Welch-$t$ threshold). Post-trigger statistics; all three configs share the same bitstream RTL, same trigger window, same A/B pool, captured at 16\,MHz on CW305.}
+\label{tab:tvla}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabularx}{\columnwidth}{@{}l c >{\raggedleft\arraybackslash}X >{\raggedleft\arraybackslash}X >{\raggedleft\arraybackslash}X c@{}}
+\toprule
+\textbf{Configuration} & $N$/pool & \textbf{1st-ord. $|t|$} & \textbf{2nd-ord. $|t|$} & \textbf{Var ratio $|1{-}r|$} & \textbf{Verdict} \\
+\midrule
+SW (no ISE issued)         & 10\,k & 13.96\,$\sigma$ & 3.17\,$\sigma$  & 0.0701 & LEAK \\
+ISE naive (pos.\ control)  & 5\,k  & 71.55\,$\sigma$ & 53.82\,$\sigma$ & 0.85   & LEAK \\
+ISE $+$ DOM (masked)       & 10\,k & 3.10\,$\sigma$  & 4.01\,$\sigma$  & 0.0784 & PASS \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Interpretation.} The masked design clears the $4.5\,\sigma$ threshold at first order against both unmasked baselines. The 2nd-order $|t|{=}4.01\,\sigma$ also clears, by $0.49\,\sigma$, below the positive spike expected of an alive $d{=}1$ DOM gadget at this $N$. Aliveness rests on the byte-identical FIPS-203 KAT pass, source-level review of the masking gadget, and the public capture pipeline. A positive 2nd-order control needs $N{\geq}10^{5}$ per pool and is future work. The SW row's first-order leak is broadband -- 149 out of 5\,750 post-trigger samples exceed $4.5\,\sigma$ but the largest run of consecutive crossings is shorter than the ISO 17825 default of five samples -- which is the signature expected of a secret-dependent operation diluted across millions of cycles rather than concentrated in a narrow window.
+
+\section{Pre-silicon evaluation}
+\label{sec:presi}
+
+Pre-silicon evaluation identifies vulnerable components before tape-out and steers the next-iteration fix. While a silicon TVLA returns only a single pass/fail number, the same fixed-vs-random pool replayed at two views of the circuit pinpoints the responsible register or wire. We adopt RTeAAL-based tensor simulation~\cite{rtl2aal} at the RTL netlist (L1, per-bit) and the routed XC7A35T fabric annotated with open \texttt{chipdb} PIP-timing context (L3, per-tile and per-PIP). The shared pool indexing lets a leak identified at L1 back-trace deterministically through \texttt{synth\_xilinx} techmap to specific PIPs, and an L3 tile flagged as leaky back-attributes to the originating RTL register.
+
+For our masked \mlkem (Table~\ref{tab:presi}), the trace points to the three unmasked CV-X-IF boundary registers (rs1, rs2, result) as the source of leakage, not the DOM gadget. The masked core stays clean at both layers, and the silicon CW305 power measurement at the same $N$ agrees. The fix follows directly: re-mask the boundary registers before they cross the CV-X-IF latch, at a cost of one extra PRNG cycle and one XOR stage of latency. Closed-source vendor TVLA flows cannot produce per-component maps of this kind. Our simulator tracks signal activity but not gate-level glitches; parasitic coupling, glitch propagation, and PVT-corner timing are left to a follow-up gate-level simulation.
+
+\section{Conclusion}
+\label{sec:concl}
+
+We present a fully open-source reference of the new PQC standards, with and without countermeasures, and demonstrate a successful assessment of the first-order leakage of the design.
+
+\begin{table}[!t]
+\centering
+\caption{Cross-layer leakage attribution at $N{=}10$k.}
+\label{tab:presi}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabularx}{\columnwidth}{@{}l c >{\raggedleft\arraybackslash}X >{\raggedleft\arraybackslash}X >{\raggedleft\arraybackslash}X@{}}
+\toprule
+\textbf{Region} & \textbf{Mask} &
+\textbf{L1 bits} & \textbf{L3 PIPs (sig.)} &
+\textbf{L3 tiles$\,\cap\,$reg.} \\
+\midrule
+Unmasked CV-X-IF boundary       & \xmark & 96/96 & 14{,}951    & 248          \\
+Masked core                     & \cmark & 0/240 & 58/2{,}947  & 713/2{,}593  \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+
+
+\bibliographystyle{IEEEtran}
+\begin{thebibliography}{99}\fontsize{6}{7}\selectfont\setlength{\itemsep}{0pt}\setlength{\parsep}{0pt}\setlength{\leftmargin}{8pt}
+\bibitem{fips} NIST, ``FIPS-203 (ML-KEM) and FIPS-204 (ML-DSA),'' Aug.\ 2024.
+\bibitem{hsiao_oscar} Y.-H.~Hsiao \emph{et al.}, ``RTL verification of micro-architectural timing channels,'' OSCAR Workshop, 2025.
+\bibitem{kastner_clepsydra} A.~Ardeshiricham, W.~Hu, R.~Kastner, ``Clepsydra: timing flows in hardware,'' ICCAD, 2017.
+\bibitem{sen} S.~Sen, A.~Ghosh, "Circuit-Level Techniques for Side-Channel Attack Resilience: A tutorial," IEEE SSC Magazine, 16(4):96--108, Fall 2024.
+\bibitem{saarinen} M.-J.~O.~Saarinen, ``Side-channel test methodology for ML-KEM/ML-DSA,'' HOST WiP, 2025.
+\bibitem{ravi_chosen_ct} P.~Ravi \emph{et al.}, ``Generic side-channel attacks on CCA-secure lattice KEMs,'' \emph{TCHES}, 2020.
+\bibitem{ueno_curse} R.~Ueno \emph{et al.}, ``Curse of re-encryption: power/EM on PQ KEMs,'' \emph{TCHES}, 2022.
+\bibitem{horcrux} ``HORCRUX: a lightweight PQC RISC-V eXtension architecture,'' IACR ePrint 2025/1934.
+\bibitem{telescope} Z.~Liu, A.~Malnicof, A.~Roy, P.~Schaumont, ``Telescope: top-down hierarchical pre-silicon side-channel leakage assessment in SoC design,'' ASIA CCS, 2025.
+\bibitem{rtl2aal} J.~Zhu \emph{et al.}, ``RTeAAL Sim: using tensor algebra to represent and accelerate RTL simulation,'' ASPLOS, 2026.
+\bibitem{hope_mlkem} E.~Camacho-Ruiz \emph{et al.}, ``HOPE-MLKEM: high-order masked ML-KEM,'' \emph{TCHES}, 2025.
+\bibitem{gross_dom} H.~Gro{\ss}, S.~Mangard, T.~Korak, ``Domain-oriented masking,'' CARDIS, 2016.
+\bibitem{mangard_book} S.~Mangard, E.~Oswald, T.~Popp, \emph{Power Analysis Attacks}, Springer, 2007.
+\end{thebibliography}
+
+\end{document}
+

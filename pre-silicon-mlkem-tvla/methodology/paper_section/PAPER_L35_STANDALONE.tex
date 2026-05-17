@@ -1,0 +1,90 @@
+% =============================================================================
+% L3.5 standalone TCHES contribution — fabric-level leakage map
+% Date: 2026-05-15. Numbers verified from on-disk artefacts.
+% =============================================================================
+
+\subsection{L3.5: open-flow fabric-level leakage map with chipdb timing context}
+\label{sec:l35-standalone}
+
+We present \emph{L3.5}, a fabric-level leakage map that joins per-bit RTL TVLA
+results (Tier~1) with the post-place-and-route routing geometry of the target
+FPGA and the device-specific timing data shipped inside Project~X-Ray.  The
+result is not a coordinate transform of Tier~1; it is the joining of three
+independently-grounded data sources --- per-bit Welch~$t$ at $N{=}10\,000$, the
+\texttt{nextpnr-xilinx} routed netlist, and the \texttt{xc7a35t.bin} chip
+database --- to produce a per-tile leakage map annotated with physical-layer
+delay context that is directly actionable for EM-probe placement on
+follow-up silicon campaigns~\cite{mangard2007power}.
+
+\paragraph{Per-tile Welch-$t$.}
+We project the Tier-1 per-cycle per-FF qmask onto the $128 \times 108$ tile
+grid of the XC7A35T part using the routed-net-to-PIP mapping recovered from
+\texttt{nextpnr-xilinx}'s \texttt{routed.json} (688{,}153 PIP traversals
+across 53{,}329 routed nets).  Per-(cycle, tile) Welch-$t$ at $N{=}10\,000$
+fixed-vs-random pools yields $|t|_{\max}=351.40$ at cycle~121, tile
+$(10,105)$, with $961$ unique tiles above the $4.5\sigma$ threshold.  A SHAM
+null at the same $N$ (fixed plaintext, varied masks in both pools) yields
+$|t|_{\max}=3.08$ and $0/13{,}824$ tiles above threshold, anchoring the
+empirical false-positive rate of the projection.
+
+\paragraph{Spatial-cluster analysis (information not in Tier~1).}
+Per-tile leakage exhibits strong spatial clustering: the average fraction of
+$8$-neighbor tiles that are also leaky among the $961$ leaky tiles is $0.652$,
+a $9.4\times$ enrichment over the random baseline of $0.070$.  Tier~1 per-bit
+Welch is blind to this structure --- it reports per-bit~$t$ values without any
+notion of physical adjacency.  L3.5 surfaces it directly and motivates EM
+probe placement strategies that exploit spatial coherence, e.g., a single
+EM~probe positioned over an interconnect cluster covers many leaky PIPs at
+once.
+
+\paragraph{Tile-type taxonomy.}
+The 14{,}951 PIPs in the routing fan-out of the Tier-1 leaky boundary
+registers (\texttt{rs1\_reg}, \texttt{rs2\_reg}, \texttt{result\_reg};
+$96/336$ leaky bits) distribute across tile types as: INT\_L 54\,\%
+($8{,}091$ PIPs), INT\_R 28\,\% ($4{,}171$), CLBLL\_L 6\,\% ($944$), CLBLM\_R
+6\,\% ($823$), DSP\_R 2\,\% ($337$), with the remainder spread across small
+counts in BRAM and IO tiles.  The interconnect-tile dominance is consistent
+with the design's CV-X-IF boundary registers feeding combinational fan-out
+into the SCA-PQC coprocessor's masking gadget; this geographic
+characterisation is unavailable at Tier~1.
+
+\paragraph{chipdb-derived per-tile timing.}
+We parse the \texttt{xc7a35t\_ftg256.bin} chip database that drives
+\texttt{nextpnr-xilinx}'s static timing analysis with a $\sim$200-line Python
+parser that reverse-engineers the \texttt{TimingDataPOD} structure documented
+in \texttt{chipdb.hexpat}.  We recover $268$ pip-class delays (range
+$1{-}10\,000$\,ps), $127$ wire timing classes with $R$+$C$ parasitics, and
+per-tile-type pip-delay statistics for all $112$ tile types in the device.
+The dominant interconnect tiles (INT\_L/INT\_R) carry $3{,}746$ pips each
+with mean $132$\,ps and maximum $301$\,ps PIP delay.  Combining this with the
+Tier-1-projected leakage gives a delay-weighted leakage score
+$|t|_{\max} \cdot \log(1+\Delta_{\text{ps}})$ per tile that ranks
+EM-attack-relevant fabric regions by both leakage magnitude and physical
+switching speed.
+
+\paragraph{Joint-risk null --- a falsifiable claim.}
+Across the $14{,}951$ leaky PIPs, \emph{zero} PIPs satisfy both
+$|t|>4.5\sigma$ and chipdb max-delay $>1000$\,ps.  Leakage propagates
+exclusively through fast interconnect (INT\_L/INT\_R at $132$/$301$\,ps
+avg/max), ruling out timing-glitch-driven leakage on the masked path within
+the fabric model.  This is a falsifiable negative claim: any future silicon
+EM measurement that locates leakage at slow-routing nodes would invalidate
+it.  We frame this as the L3.5 contribution's positive scientific value ---
+it is a hypothesis-generator that the silicon ground truth of
+\S\ref{sec:silicon} can either corroborate or refute.
+
+\paragraph{Honest scope.}
+L3.5 is an activity-attribution and timing-context layer, not a
+physical-layer simulator: we do not model parasitic capacitive cross-coupling
+between adjacent routes, glitch propagation through unbuffered LUT-mux
+chains, or PVT-corner timing variation.  These are deferred to a follow-up
+gate-level SDF campaign.  The L3.5 contribution as stated --- ``\emph{open-flow
+per-tile leakage map with chipdb timing overlay and a falsifiable
+glitch-overlap null}'' --- is intentionally narrow, defensible, and cleanly
+separable from both the per-bit Tier-1 contribution upstream and the silicon
+ground truth downstream.
+
+% Citations referenced:
+%   schneider2015leakage   = Schneider-Moradi, CHES 2015 (fixed-vs-random TVLA)
+%   whitnall2019iso17825   = Whitnall-Oswald, ASIACRYPT 2019 (multiple-comparisons)
+%   mangard2007power       = Mangard-Oswald-Popp, Power Analysis Attacks

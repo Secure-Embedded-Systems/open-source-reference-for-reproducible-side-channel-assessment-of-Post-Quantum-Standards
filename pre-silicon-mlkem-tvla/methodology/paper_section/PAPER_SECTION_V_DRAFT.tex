@@ -1,0 +1,189 @@
+% =============================================================================
+% Section V — Open-flow pre-silicon SCA validation stack
+% Draft 2026-05-15. Insert into oscar2026.tex after §IV (implementation).
+% TCHES-targeted. Honest framing per the borderline-lean-accept review.
+% =============================================================================
+
+\section{Open-flow pre-silicon SCA validation stack}
+\label{sec:openflow-stack}
+
+We release a four-tier pre-silicon SCA validation stack that operates entirely
+on open-source tools (Yosys, nextpnr-xilinx, Project~X-Ray) on the \emph{same
+flow that produced the silicon-validated bitstream} of \S\ref{sec:silicon}.
+The stack is a conservative \emph{pre-techmap upper bound}: it surfaces
+candidate leakage at RTL refinement time without requiring CW305 traces,
+trades a known false-positive rate for early-loop visibility, and concludes
+with an agreement table against measured silicon.
+
+\subsection{Tier~1: per-bit RTL-named TVLA on the masked gadget}
+\label{sec:tier1}
+
+We extract a tensor-friendly intermediate model
+(\textit{Object-Instance-Mapping}, OIM) from the Yosys-flatten netlist of the
+PQC coprocessor sub-design (\texttt{sca\_pqc\_coprocessor\_top}) annotated
+with \texttt{(* keep *)} on every register declaration.  The OIM exposes
+\textbf{336 individual flip-flop $Q$-bits} with their hierarchical RTL
+names (e.g., \texttt{u\_mask.r\_latched\_q[17]}, \texttt{rs2\_reg[17]}).
+
+Under a fixed-vs-random Welch-$t$ campaign at $N{=}10\,000$ traces per pool
+following Schneider and Moradi~\cite{schneider2015leakage}, with shares drawn
+independently per pool and a SHAM null at the same $N$, the masking gadget's
+internal registers are \emph{data-independent at per-bit resolution}:
+\texttt{u\_mask.r\_latched\_q} (32~b) reports
+$|t|_\mathrm{max} = 3.42$ and \texttt{u\_prng.s} (128~b)
+$|t|_\mathrm{max} = 3.72$, both below the $4.5\sigma$ threshold and below
+their SHAM nulls (2.98 and 4.63 respectively).  The single SHAM-side excursion
+on \texttt{u\_prng.s[5]} ($|t|=4.63$) is consistent with the 0.46 family-wise
+expected false positives at $4.5\sigma$ over $134{,}400$ (cycle, bit)
+comparisons; per the Schneider--Moradi falsifier
+$|t|_\mathrm{REAL} \geq |t|_\mathrm{SHAM}$ at the same (cycle, bit) is
+necessary for a first-order leak, and the inverted ordering at this bit
+falsifies it.  $\sqrt{N}$ convergence corroborates the result: the boundary
+register \texttt{rs2\_reg[17]} scales $109.43 \to 534.63$ across $N{=}500
+\to 10\,000$ (ratio $2.24$ vs.\ $\sqrt{5}=2.24$), while \texttt{r\_latched\_q}
+stays flat at $3.30 \to 3.42$ as expected for a null cell.  A 24-vector
+self-check passes 24/24 throughout.
+
+\subsection{Tier~3.5: fabric-tile activity projection}
+\label{sec:tier35}
+
+We project Tier-1 per-cycle per-FF toggle indicators onto the post-PnR routed
+fabric of the XC7A35T part using \texttt{nextpnr-xilinx}'s
+\texttt{routed.json} and the resulting \texttt{net\_to\_pip.csv}
+($688{,}153$ PIP traversals).  Each FF $\to$ tile contribution is summed,
+yielding a per-(cycle, tile) activity tensor on the $128 \times 108$ tilegrid.
+Welch-$t$ on this tensor at the same $N{=}10\,000$ pools as Tier~1 gives
+$|t|_\mathrm{max}^{\mathrm{REAL}} = 351.4$ and
+$|t|_\mathrm{max}^{\mathrm{SHAM}} = 3.08$.
+
+We frame this explicitly as a \emph{fabric-localisation visualisation of
+Tier-1}, not an independent leakage tier: the projection is a deterministic
+linear map of the Tier-1 result, so its information content cannot exceed
+Tier~1's, and the per-tile $|t|$ values reflect the routing fanout of the
+leaky CV-X-IF boundary registers (\texttt{rs1\_reg}, \texttt{rs2\_reg},
+\texttt{result\_reg}) that Tier~1 already identified.  It is provided as an
+operational artefact for EM-probe placement on follow-up silicon campaigns,
+not as a second statistically-independent test (cf.\ Whitnall and
+Oswald~\cite{whitnall2019iso17825} on the multiple-comparisons hazard).
+
+\subsection{Tier~4: chipdb-derived per-tile timing}
+\label{sec:tier4}
+
+The internal timing-data binary that drives \texttt{nextpnr-xilinx}'s static
+timing analysis (\texttt{xc7a35t.bin}, generated from Project~X-Ray) is
+parseable open-source in $\sim$200 lines of Python.  We extract its
+\texttt{TimingDataPOD} block to recover \textbf{268 pip-class delays}
+(range 1\,ps--10\,ns, median 252\,ps), 127 wire classes with $R$+$C$
+parasitics, and per-tile-type pip statistics for all 112 tile types in the
+device.  The dominant interconnect (INT\_L/INT\_R, 3{,}746 PIPs/tile)
+exhibits a 132\,ps mean and 301\,ps maximum PIP delay; DSP and BRAM tile
+types reach 1.6--3.5\,ns.  The resulting per-tile delay heatmap is overlaid
+with the Tier-3.5 $|t|_\mathrm{max}$ projection in a four-panel composite
+(Fig.~\ref{fig:integrated-fabric}): leakage-tile heatmap, chipdb delay
+heatmap, log-scaled combined-risk overlay, and top-10 tile annotation.
+This complements the FPGA-internal STA path documented by
+Mangard~\cite{mangard2007power} \S5.4 with a fully open extraction route.
+
+\subsection{Full-SoC tsim infrastructure}
+\label{sec:fullsoc}
+
+For end-to-end pre-silicon coverage we additionally extract an OIM for the
+full \texttt{sca\_pqc\_cw305\_top} hierarchy (cv32e40x core, CV-X-IF
+interface, greyhound SoC fabric, USB front-end, masking gadget,
+$2 \times \mathrm{ROM/SRAM}$ memories): \textbf{6{,}270 RTL-named FF
+$Q$-bits} across 579 DFF slices, 5{,}662 combinational ops, and a
+\texttt{\$mem\_v2} read/write evaluator we add to the tsim runtime to
+support \texttt{cv32e40x} fetching from the SRAM via the OBI bus.  Runtime
+firmware loading via a \texttt{.hex} loader gives byte-identical
+\texttt{firmware\_bram\_init.hex} initialisation to the silicon path.
+The simulator runs at 3--4\,kCyc/s and is cycle-accurate, bit-accurate, and
+zero-delay (no glitches).
+
+We characterise the simulator infrastructure with a smoke TVLA at $N{=}200$
+varying the JTAG/USB/strap port inputs fixed-vs-random over $500$ cycles per
+trace (firmware contents identical across pools).  The result
+($|t|_\mathrm{max} = 17.28$ on a USB front-end address register) is reported
+as an \emph{infrastructure demonstration}, not as a security claim: $N{=}200$
+is below the ISO~17825 floor of $10\,000$, and the data-dependent FF flagged
+(\texttt{i\_usb\_reg\_fe.usb\_addr\_r}) is culled by \texttt{synth\_xilinx}
+in the silicon-bound flow (see~\S\ref{sec:agreement}) and therefore does not
+exist on the CW305 die.  Full-SoC TVLA on registers that survive techmap
+requires per-trace varying \emph{firmware} (e.g., ML-KEM keygen with varied
+secret seeds) so that \texttt{cv32e40x}'s data-path FFs leak; this is
+deferred to a future evaluation.
+
+\subsection{Open-flow tooling hazards}
+\label{sec:hazards}
+
+Building this stack surfaced two non-obvious failure modes that any future
+Yosys-OIM consumer will hit; we name them so others do not have to rediscover
+them.
+
+\textbf{Wide-cell 64-bit truncation.}\quad The Yosys-emitted
+\texttt{\$mux}, \texttt{\$pmux}, \texttt{\$bwmux} cells used for
+register-file write-back paths in cv32e40x and for the PRNG state mux in the
+DOM-AND gadget have $\geq{}128$-bit~$Y$ ports.  A naive OIM evaluator that
+gathers/scatters port slices into a 64-bit accumulator silently writes zero
+to bits 64..127.  In the DOM-AND gadget this collapses the PRNG $D$-input
+path to a constant zero across the 32-bit refresh slice, making the masking
+appear functionally unmasked at Tier~1.  We document the bit-by-bit
+fallback that \texttt{tsim} adopts for any cell where any port slice
+exceeds 64~bits.
+
+\textbf{Y/Q multi-driver aliasing on FSM state.}\quad Yosys's
+\texttt{flatten}+\texttt{opt -fast} pass occasionally aliases a combinational
+op's $Y$ output bit to the same logical-index bit as a downstream DFF's $Q$
+output (most prominently for state-register bits inside the cv32e40x
+\texttt{controller\_fsm}).  A naive evaluator that processes ops in layer
+order and updates DFFs at the cycle boundary observes the comb op's write
+\emph{after} the DFF latch, producing a stuck-at-RESET FSM that never
+transitions to FUNCTIONAL.  We pre-compute a per-DFF-bit alias bitmask at
+startup; when a comb op writes the next-state value to a Q-aliased LI bit
+during the same cycle as the DFF's clock edge, we redirect the value to the
+DFF's $D$ side and restore the $Q$ to its pre-evaluation value.  This is the
+same class of artefact as the \texttt{int16\_t} bit-index overflow in flat
+OIMs whose $\mathrm{LI\_SIZE}$ exceeds $32{,}767$ (a one-character fix to
+\texttt{int32\_t}); both manifest as silent zero-propagation rather than as
+errors, and both pass the per-cycle self-check while masking the actual
+leakage path.
+
+\subsection{Validation-stack vs.\ silicon: agreement table}
+\label{sec:agreement}
+
+The honest accounting between Tier-1 \emph{candidate} leakage and the silicon
+ground truth of \S\ref{sec:silicon} is reported in
+Table~\ref{tab:agreement}.  Of the $N$~bits flagged by Tier-1 above
+$|t|=4.5\sigma$ at $N{=}10\,000$, $M$~survive \texttt{synth\_xilinx},
+$P$~appear in the routed bitstream, and $K$~exceed the same threshold in the
+CW305 silicon TVLA at $N{=}10\,000$ traces per pool.
+
+\begin{table}[t]
+\caption{Tier-1 (open-flow pre-silicon) vs.\ silicon agreement at $N{=}10\,000$.}
+\label{tab:agreement}
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+Stage & Bits flagged & Cumulative survival & Notes \\
+\midrule
+Tier-1 \texttt{flatten}+\texttt{opt}     & \todo{N}  & --        & per-bit Welch, RTL-named \\
+Survives \texttt{synth\_xilinx}          & \todo{M}  & \todo{P\%} & FDRE/FDCE/FDPE/FDSE retained \\
+Placed in routed bitstream               & \todo{P}  & \todo{Q\%} & has \texttt{NEXTPNR\_BEL} attribute \\
+Above $4.5\sigma$ in silicon TVLA        & \todo{K}  & \todo{R\%} & CW305 \cite{this-paper-sec-VI} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+We frame the surviving cohort, not the full Tier-1 set, as the silicon-relevant
+prediction.  This positions Tier-1 as a \emph{conservative pre-techmap upper
+bound}: it over-reports relative to silicon by exactly the bits that
+\texttt{synth\_xilinx} elects to optimise away, and the gap is itself
+informative -- a designer reviewing the Tier-1 output learns which RTL-level
+registers are vulnerable in \emph{any} synthesis variant, and the agreement
+column tells them which subset will reach silicon under the chosen flow.
+To our knowledge this is the first published agreement table between
+open-flow pre-silicon TVLA and CW305 silicon ground truth on the same RTL.
+
+% End of §V draft. Bibliography keys used:
+%   schneider2015leakage   = Schneider-Moradi, CHES 2015
+%   whitnall2019iso17825   = Whitnall-Oswald, ASIACRYPT 2019
+%   mangard2007power       = Mangard-Oswald-Popp, Power Analysis Attacks book

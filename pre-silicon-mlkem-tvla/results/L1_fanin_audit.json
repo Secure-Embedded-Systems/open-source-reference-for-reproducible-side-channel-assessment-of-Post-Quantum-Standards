@@ -1,0 +1,85 @@
+{
+  "module": "masking_cone_top",
+  "n_cells": 81,
+  "secret_ports_audited": [
+    "rs1_i",
+    "rs2_i"
+  ],
+  "seed_ports_audited": [
+    "seed_data_i"
+  ],
+  "control_ports_audited": [
+    "op_i",
+    "latch_strobe_i",
+    "consume_i",
+    "seed_valid_i",
+    "seed_idx_i",
+    "q_sel_i",
+    "clk_i",
+    "rst_ni"
+  ],
+  "per_ff": [
+    {
+      "ff_group": "u_mask.r_latched_q",
+      "n_d_bits": 32,
+      "reached_secret_ports": [],
+      "reached_seed_ports": [
+        "seed_data_i"
+      ],
+      "reached_control_ports": [
+        "clk_i",
+        "consume_i",
+        "rst_ni",
+        "seed_idx_i",
+        "seed_valid_i"
+      ],
+      "reached_other_ports": [],
+      "tvla_contamination": false
+    },
+    {
+      "ff_group": "u_mask.r_latched_valid_q",
+      "n_d_bits": 1,
+      "reached_secret_ports": [],
+      "reached_seed_ports": [],
+      "reached_control_ports": [
+        "latch_strobe_i",
+        "op_i"
+      ],
+      "reached_other_ports": [],
+      "tvla_contamination": false
+    },
+    {
+      "ff_group": "u_prng.s",
+      "n_d_bits": 128,
+      "reached_secret_ports": [],
+      "reached_seed_ports": [
+        "seed_data_i"
+      ],
+      "reached_control_ports": [
+        "clk_i",
+        "consume_i",
+        "rst_ni",
+        "seed_idx_i",
+        "seed_valid_i"
+      ],
+      "reached_other_ports": [],
+      "tvla_contamination": false
+    },
+    {
+      "ff_group": "u_prng.seed_done",
+      "n_d_bits": 4,
+      "reached_secret_ports": [],
+      "reached_seed_ports": [],
+      "reached_control_ports": [
+        "clk_i",
+        "rst_ni",
+        "seed_idx_i",
+        "seed_valid_i"
+      ],
+      "reached_other_ports": [],
+      "tvla_contamination": false
+    }
+  ],
+  "n_contamination": 0,
+  "verdict": "PASS"
+}
