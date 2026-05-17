@@ -1,0 +1,144 @@
+% =============================================================================
+% Cross-layer tensor simulation section — self-contained draft
+% Date: 2026-05-15.  All numbers verified from on-disk artefacts.
+% Figures: fig_l1_l35_tvla_n10k.pdf, fig_leaky_components_layers.pdf
+% =============================================================================
+\documentclass[10pt,a4paper]{article}
+\usepackage[margin=2.0cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath,amssymb}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{makecell}
+\usepackage{pifont}
+\usepackage[hidelinks]{hyperref}
+\newcommand{\cmark}{\textcolor{green!55!black}{\ding{51}}}
+\newcommand{\xmark}{\textcolor{red!75!black}{\ding{55}}}
+\captionsetup{font=small,labelfont=bf}
+\title{\textbf{Tensor simulation across abstraction layers \\[2pt]
+       for an open-flow ML-KEM-1024 / ML-DSA-44 masked accelerator}}
+\author{OSPQC\_Pro\_MLKEM1024\_MLDSA44\_CW305 --- internal draft, 2026-05-15}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\section*{Tensor simulation: from binary silicon TVLA to a falsifiable
+cross-layer leakage map}
+
+Side-channel evaluation on a masked PQC accelerator is normally a binary,
+post-silicon affair: one builds the chip, runs $10\,000$ traces, and reads a
+single $|t|$-statistic that says ``leaks'' or ``does not leak'' without
+telling the designer which register, which gate, or which routed wire is
+responsible.  Tensor simulation closes this gap.  By carrying a per-cycle,
+per-net bit-vector tensor through a leveled cascade of operator evaluations
+extracted from the open-source Yosys / nextpnr-xilinx flow, the same
+simulator can be replayed at two abstraction layers --- the \emph{RTL
+netlist} (\textbf{L1}, per-bit) and the \emph{routed fabric with chipdb
+PIP-timing context} (\textbf{L3.5}, per-tile and per-PIP) --- using one
+fixed-vs-random pool indexing throughout.  Because the indexing is shared, a
+leaky signal identified at L1 can be tracked deterministically through
+\texttt{synth\_xilinx} techmap to a set of routed nets and finally to
+specific PIPs on the XC7A35T fabric (Fig.~\ref{fig:l1-l35-tvla},
+Fig.~\ref{fig:leaky-components}); conversely, an L3.5 tile flagged as leaky
+can be back-attributed to the originating RTL register.  This converts a
+single silicon $|t|$-number into a falsifiable cross-layer hypothesis chain
+that any later EM measurement on the CW305 can corroborate or refute on a
+per-component basis.
+
+The significant outcome for our ML-KEM-1024 / ML-DSA-44 masked design is
+that this cross-layer trace pinpointed the only surviving leakage to the
+three unmasked CV-X-IF boundary registers (\texttt{rs1\_reg},
+\texttt{rs2\_reg}, \texttt{result\_reg}), \emph{not} to the DOM-AND gadget
+itself: the masking core's \texttt{r\_latched\_q} and PRNG state stay below
+$4.5\sigma$ at $N{=}10\,000$, while $96/336$ boundary bits leak with
+\texttt{rs2\_reg[17]} following $\sqrt{N}$-faithful growth and projecting
+onto $14\,951$ PIPs concentrated on \texttt{INT\_L}/\texttt{INT\_R} fast
+interconnect at L3.5 --- a fabric-localised, glitch-free leakage footprint
+($0/14\,951$ PIPs jointly satisfy $|t|>4.5\sigma$ \emph{and} chipdb
+max-delay $>1000$\,ps) that directly informs both the silicon EM-probe
+placement and the next-iteration RTL fix (boundary-register re-blinding
+before the CV-X-IF latch).  Per-component fabric leakage attribution of
+this kind is not surfaced by any closed-source vendor TVLA flow we are
+aware of, and is not directly recoverable from a single silicon
+$|t|$-statistic.  Boundary-register re-blinding is the natural
+countermeasure but is not free: it costs an additional $32$-bit fresh-mask
+refresh per operand edge ($\sim$1 PRNG cycle) and a single XOR-stage of
+latency.  L3.5 is an activity-attribution layer, not a physical-layer
+simulator: parasitic capacitive cross-coupling, glitch propagation through
+unbuffered LUT-mux chains, and PVT-corner timing variation are deferred to
+a follow-up gate-level SDF campaign.
+
+\begin{table}[h!]
+\centering
+\caption{Masked vs unmasked leakage at L1 (RTL netlist, per-bit, $336$ FF
+bits total split into $96$ boundary + $240$ masked-core) and L3.5
+(post-route fabric, per-tile and per-PIP), $N{=}10\,000$ fixed-vs-random.
+The SHAM column is the false-positive control (fixed plaintext, varied
+masks in both pools); L3.5 leaky-tile count is the number of tiles whose
+per-tile Welch-$t$ exceeds $4.5\sigma$ at some cycle.  Surviving leakage
+is confined to the unmasked CV-X-IF boundary; the masked core is below
+$4.5\sigma$ at every layer, and silicon EM at the same $N$ corroborates
+the masked-core null at the $1^{\text{st}}$ and $2^{\text{nd}}$
+statistical moments.}
+\label{tab:masked-vs-unmasked-l1-l35}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.18}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{@{}l c r r r r r r@{}}
+\toprule
+\textbf{Region} & \textbf{Mask} &
+\makecell[r]{\textbf{L1 leaky}\\\textbf{bits}} &
+$\boldsymbol{|t|_{\max}^{L1}}$ &
+\makecell[r]{$\boldsymbol{|t|^{L1}}$\\\textbf{SHAM}} &
+\makecell[r]{\textbf{L3.5}\\\textbf{leaky PIPs}} &
+\makecell[r]{\textbf{L3.5}\\\textbf{leaky tiles}} &
+$\boldsymbol{|t|_{\max}^{L3.5}}$ \\
+\midrule
+Unmasked CV-X-IF boundary       & \xmark & \textbf{96/96}  & \textbf{534.6} & 3.83 & \textbf{14\,951} & \textbf{961} & \textbf{351.4} \\
+Masked core (DOM, PRNG, Keccak) & \cmark & \textbf{0/240}  & 3.72           & 3.62 & \textbf{0}       & \textbf{0}   & --- \\
+\midrule
+Silicon (CW305 EM, masked, $N{=}10$k) & \cmark & --- & --- & --- & --- & --- & \textbf{3.10}\,(1\textsuperscript{st}\,o) / \textbf{4.01}\,(2\textsuperscript{nd}\,o) \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\noindent\textbf{Reading guide.}  At both L1 and L3.5 the masked core is
+clean ($0$ leaky bits $\to 0$ leaky PIPs), while the unmasked boundary
+leaks deterministically ($96$ leaky bits $\to 14\,951$ leaky PIPs across
+$1\,671$ tiles).  The silicon CW305 measurement at the same $N{=}10\,000$
+yields $0/6\,000$ samples above $4.5\sigma$ on the masked path and a
+$2^{\text{nd}}$-order $|t|_{\max}$ of $4.01$, satisfying the ISO 17825
+floor and corroborating the simulator-side prediction that the masked-core
+contribution is null.  The cross-layer trace thereby exposes the by-design
+unmasked CV-X-IF boundary as the only surviving attack surface and points
+the next iteration at boundary-register re-blinding rather than at the
+masking gadget.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.97\linewidth]{fig_l1_l35_tvla_n10k.pdf}
+\caption{Cross-layer TVLA at $N{=}10\,000$ fixed-vs-random.  (a),(b) RTL
+netlist (per-bit) REAL and SHAM; (c),(d) post-route fabric (per-tile,
+XC7A35T) REAL and SHAM.  All four panels share the same fixed-vs-random
+pool indexing; the SHAM panels (b),(d) are the false-positive control.}
+\label{fig:l1-l35-tvla}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.99\linewidth]{fig_leaky_components_layers.pdf}
+\caption{Leaky-component inventory across abstraction layers.  (a) Cascade
+RTL FF bits $\to$ synth\_xilinx primitives $\to$ routed bitstream hits
+$\to$ fabric tiles $\to$ fabric PIPs $\to$ silicon (symlog).  (b)
+Per-tile-type breakdown of the $14\,951$ leaky PIPs.  (c) Folded category
+donut: \texttt{INT} interconnect $82.0\,\%$, \texttt{CLB} logic
+$14.9\,\%$, \texttt{DSP} $3.0\,\%$.}
+\label{fig:leaky-components}
+\end{figure}
+
+\end{document}

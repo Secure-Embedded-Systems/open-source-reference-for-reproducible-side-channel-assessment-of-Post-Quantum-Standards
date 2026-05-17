@@ -1,0 +1,17 @@
+cell_idx,cell_name,width,n_bits_in_npz,bits_above_threshold,max_abs_t
+0,u_keccak.acc_c[0],32,32,0,0.0
+1,u_keccak.acc_c[1],32,32,0,0.0
+2,u_keccak.acc_c[2],32,32,0,3.423
+3,u_keccak.acc_c[3],3,3,0,0.0
+4,u_keccak.acc_c[4],32,32,32,387.279
+5,u_keccak.acc_c[5],32,32,32,534.63
+6,u_keccak.acc_c[6],6,6,0,0.0
+7,u_keccak.acc_c[7],1,1,0,0.0
+8,u_keccak.acc_c[8],32,32,32,103.0
+9,u_keccak.acc_c[9],32,32,0,3.14
+10,u_keccak.acc_c[10],32,32,0,3.65
+11,u_keccak.acc_c[11],32,32,0,3.721
+12,u_keccak.acc_c[12],32,32,0,3.537
+13,u_keccak.acc_c[13],4,4,0,0.0
+14,u_keccak.acc_c[14],1,1,0,0.0
+15,u_keccak.acc_c[15],1,1,0,0.0

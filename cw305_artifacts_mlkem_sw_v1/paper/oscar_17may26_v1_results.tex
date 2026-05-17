@@ -1,0 +1,253 @@
+% Detailed measurement record companion to oscar_17may26_v1.tex
+% Compile standalone:  pdflatex oscar_17may26_v1_results.tex
+% (does not \input any other file from the paper tree)
+
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=22mm]{geometry}
+\usepackage{booktabs,tabularx,array,xcolor}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\usepackage[hyperref=true,colorlinks=true,allcolors=blue!50!black]{hyperref}
+\newcommand{\mlkem}{ML-KEM-1024}
+\newcommand{\mldsa}{ML-DSA-44}
+% Path macros: paths are relative to this folder (cw305_artifacts_mlkem_sw_v1/).
+% Local SW data has no prefix; sibling ISE artefact reached via ../.
+\newcommand{\swart}{}                              % local: no prefix
+\newcommand{\isert}{../cw305\_artifacts\_2026\_05\_15}
+
+\title{\mlkem{} on CV32E40X / CW305: detailed cycle and TVLA measurements\\
+\large companion to oscar\_17may26\_v1.pdf}
+\date{2026-05-17}
+\author{(measurement record)}
+
+\begin{document}
+\maketitle
+
+This document is a measurement journal for \texttt{oscar\_17may26\_v1.tex}.
+Every cell here is reproducible from the artefact tree containing this
+document (\texttt{cw305\_artifacts\_mlkem\_sw\_v1/}) plus its sibling
+\texttt{cw305\_artifacts\_2026-05-15/} (the ISE configurations referenced
+for comparison). All paths in this document are relative to the artefact
+root that contains this file; sibling artefact paths begin with \texttt{../}.
+
+\section{Platform and silicon target}
+
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+FPGA            & Xilinx XC7A35T-2FTG256 on ChipWhisperer CW305 \\
+Core            & OpenHW Group CV32E40X, RV32IMC, no ISE-extended ABI \\
+Clock           & target 16\,MHz (P\&R \texttt{cv32e40x\_core.clk} reports 20.46\,MHz Fmax, PASS at 20\,MHz) \\
+SRAM            & 64\,KB at \texttt{0x10000000..0x1000\_FFFF} (boot at \texttt{0x10000080}, stack at \texttt{0x1000FFF0}) \\
+RTL provenance  & \texttt{\isert{}/rtl/} (git \texttt{d3d21d9}) -- snapshot of the source artefact's RTL, used at build time \\
+SoC top         & \texttt{integration/sca\_pqc\_cw305\_top.sv} of the parent OSPQC-Pro working tree \\
+crt0            & \texttt{\swart{}firmware/src/crt0\_mlkem\_sw.S} -- 8 phase markers + \texttt{csrwi 0x320,0} (clears \texttt{mcountinhibit} so \texttt{mcycle} runs) \\
+mlkem-native    & pq-code-package/mlkem-native portable-C SCU, no native arith backend \\
+Toolchain       & yosys (oss-cad-suite), nextpnr-xilinx, prjxray-db artix7, riscv64-unknown-elf-gcc \\
+\bottomrule
+\end{tabularx}
+
+\section{Measured cycle counts (Section V, Table I in the paper)}
+
+\subsection{SW-only (this work) -- live \texttt{mcycle} delta per phase}
+
+\begin{tabularx}{\linewidth}{@{}lrrrrl@{}}
+\toprule
+Phase   & Cycles (dec) & Cycles (hex) & k cycles & Time @ 16\,MHz & MBOX slot \\
+\midrule
+KeyGen  & 5\,892\,477  & \texttt{0x0059E97D} & 5\,892 & 368.3\,ms & MBOX[0] \\
+Encap   & 6\,026\,116  & \texttt{0x005BF384} & 6\,026 & 376.6\,ms & MBOX[1] \\
+Decap   & 7\,401\,699  & \texttt{0x0070F0E3} & 7\,402 & 462.6\,ms & MBOX[2] \\
+\midrule
+Sentinel & --          & \texttt{0xCAFE0001} & --     & --        & MBOX[3] = PASS (all 5 byte-checks pk/sk/ct/ss\_e/round-trip clear) \\
+\bottomrule
+\end{tabularx}
+
+\medskip
+Bitstream: \texttt{\swart{}bitstreams/sca\_pqc\_cw305\_mlkem\_sw\_kat\_artifactrtl\_cyc.bit}\\
+ELF:       \texttt{\swart{}bitstreams/firmware\_mlkem\_sw\_kat\_artifactrtl\_cyc.elf}
+
+\subsection{ISE and ISE\,+\,DOM (carried over from paper)}
+
+The ISE rows in Table I cite Decap = 180\,k cyc (naive ISE) and 401\,k cyc
+(ISE\,+\,DOM), which were measured by the original authors on the same CV-X-IF
+ISE platform. KeyGen and Encap for those rows have not been independently
+re-measured for this measurement journal and are therefore omitted; if those
+numbers are needed, they should be read live from the same MBOX\,[0..2]
+protocol when the ISE bitstreams are run on the same CW305 board.
+
+\subsection{Decap speed-up (vs measured SW-only baseline)}
+
+\begin{tabularx}{\linewidth}{@{}lrrr@{}}
+\toprule
+Configuration & Decap (k cyc) & Decap (cyc) & vs.\ SW \\
+\midrule
+SW-only (this work) & 7\,402 & 7\,401\,699 & 1.0$\times$ \\
+ISE                 & 180    & 180\,000    & 41.1$\times$ (7\,401\,699 / 180\,000) \\
+ISE + DOM           & 401    & 401\,000    & 18.5$\times$ (7\,401\,699 / 401\,000) \\
+\bottomrule
+\end{tabularx}
+
+The paper previously cited \(\sim\)13.9$\times$ and 6.2$\times$ against an
+\emph{estimated} \(\sim\)2\,500\,k SW Decap. The measured 7\,402\,k pushes the
+speed-up numbers to \(\sim\)41$\times$ (naive ISE) and \(\sim\)18$\times$
+(ISE\,+\,DOM). The ratio of cost between ISE+DOM and naive ISE is unchanged at
+$2.23\times$ -- that's a firmware-only swap on byte-identical RTL.
+
+\section{TVLA -- share-recombine window, Saarinen-PQC pool (Table II in the paper)}
+
+\subsection{Protocol}
+
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+Standard        & ISO/IEC 17825:2024 (Welch-$t$, $\geq{}4.5\,\sigma$, $N{\geq}10$k) under Saarinen's PQC adaptation~\cite{saarinen} \\
+Target op       & \mlkem{} Decapsulation \\
+Target window   & Fujisaki--Okamoto share-recombine: the implicit-rejection comparison $c \stackrel{?}{=} c'$ where the masked plaintext $m'$ is unmasked and the plaintext-check oracle bit transiently exists \\
+Trigger source  & MBOX[1] pulse mapped to CW305 TIO4, bracketed around \texttt{mlk\_poly\_tomsg} in \texttt{indcpa.c} \\
+Pool A          & 1 fixed valid ciphertext \texttt{SAARINEN\_CT\_A} (correct under $\mathit{sk}_{\textrm{fixed}}$, HW = 6294 bits) \\
+Pool B          & 10-element pool of invalid ciphertexts under $\mathit{sk}_{\textrm{fixed}}$, each with Hamming weight in $\{6286,\dots,6304\}$ -- within $\pm10$ bits of HW(A) so byte-load HW cancels in the $t$-statistic \\
+A/B coin        & 32-bit Galois LFSR seeded from \texttt{mcycle}, pool label published in MBOX[3] bit\,16 \\
+Scope           & ChipWhisperer-Lite, ADC = 4\,$\times$ target = 64\,MHz, presamples = 250, samples = 6000, gain 25\,dB \\
+Post-trace fix  & per-trace DC subtract (removes slow PSU / thermal drift) \\
+\bottomrule
+\end{tabularx}
+
+\subsection{Headline numbers}
+
+\begin{tabularx}{\linewidth}{@{}l c r r r l@{}}
+\toprule
+Configuration & $N$/pool & 1st-ord. $|t|$ & 2nd-ord. $|t|$ & Var ratio $|1-r|$ & Verdict (vs 4.5\,$\sigma$) \\
+\midrule
+SW (no ISE issued)     & 1\,k  & 4.66\,$\sigma$  & 3.84\,$\sigma$  & 0.2696 & marginal (preliminary, $N <$ ISO floor) \\
+SW (no ISE issued)     & 10\,k & \textbf{13.96\,$\sigma$} & 3.17\,$\sigma$ & 0.0701 & LEAK (1st-order, broadband) \\
+ISE naive (pos.\ ctrl) & 5\,k  & 71.55\,$\sigma$ & 53.82\,$\sigma$ & 0.85   & LEAK (positive control) \\
+ISE + DOM (masked)     & 10\,k & 3.10\,$\sigma$  & 4.01\,$\sigma$  & 0.0784 & PASS \\
+\bottomrule
+\end{tabularx}
+
+\subsection{SW-only, N=1k -- preliminary sample-level statistics}
+
+\begin{tabularx}{\linewidth}{@{}lr@{}}
+\toprule
+$N_A$, $N_B$              & 1000, 1000 \\
+Sample count $T$          & 6000 (presamples 250 + post-trigger 5750) \\
+Drops (firmware $\to$ host) & 3 \\
+1st-order $|t|$ pre-trigger max  & 2.96\,$\sigma$ (samples $[0,250)$) -- below threshold, sanity OK \\
+1st-order $|t|$ post-trigger max & 4.66\,$\sigma$ at sample 1116 -- 0.16\,$\sigma$ over threshold \\
+2nd-order $|t|$ pre-trigger max  & 1.82\,$\sigma$ \\
+2nd-order $|t|$ post-trigger max & 3.84\,$\sigma$ at sample 1381 \\
+Var(A)/Var(B) post-trigger range & 0.7790\,..\,1.2696 ($|1-r|_{\max}=0.2696$) \\
+\bottomrule
+\end{tabularx}
+
+This $N{=}1$k run is preliminary and below the ISO 17825 floor. Its only use
+in this document is as the $N$-scaling reference for the ISO-compliant
+$N{=}10$k result that follows.
+
+\subsection{SW-only, N=10k -- ISO 17825-compliant sample-level statistics}
+
+\begin{tabularx}{\linewidth}{@{}lr@{}}
+\toprule
+$N_A$, $N_B$               & 10\,000, 10\,000 \\
+Sample count $T$           & 6000 (presamples 250 + post-trigger 5750) \\
+Drops (firmware $\to$ host)  & 2 \\
+Capture rate               & 1.9 traces/s, wall-time $\approx 175$\,min \\
+On-disk size               & 2 $\times$ 120\,MB \texttt{.npy} (int16, $10\,000 \times 6000$) \\
+\midrule
+1st-order $|t|$ pre-trigger max   & 2.27\,$\sigma$ (samples $[0,250)$) -- below threshold, sanity OK \\
+1st-order $|t|$ post-trigger max  & \textbf{13.96\,$\sigma$} at sample 5196 (out of 5\,750 post-trigger samples) \\
+Samples post-trigger above $4.5\,\sigma$ & 149 / 5\,750 (\textbf{broadband}, not concentrated) \\
+Longest run of consecutive samples above $4.5\,\sigma$ & $< 5$ (does not satisfy ISO 17825 default run-length flag) \\
+\midrule
+2nd-order $|t|$ pre-trigger max   & 2.62\,$\sigma$ \\
+2nd-order $|t|$ post-trigger max  & 3.17\,$\sigma$ at sample 2884 -- below threshold (no 2nd-order leak; expected for an unmasked design) \\
+\midrule
+Var(A)/Var(B) post-trigger range  & 0.9299\,..\,1.0626 ($|1-r|_{\max}=0.0701$) -- pools have essentially identical noise distributions; leakage is purely in the mean \\
+\bottomrule
+\end{tabularx}
+
+\textbf{Reading.}
+\begin{itemize}
+\item $\sqrt{N}$ scaling holds. The $N{=}1$k preliminary $4.66\,\sigma$ projects
+to $4.66 \cdot \sqrt{10} \approx 14.7\,\sigma$ at $N{=}10$k. Measured: $13.96\,\sigma$.
+Within 5\,\% of projection -- so the small-$N$ signal was a real leak, not
+a statistical sampling artefact.
+\item Magnitude is $\sim 5\times$ smaller than the ISE-naive positive control
+projected to the same $N$ ($71.55\,\sigma \cdot \sqrt{2} \approx 101\,\sigma$
+at $N{=}10$k from the $N{=}5$k reading). The SW Decap takes 7\,402\,k cycles
+versus 180\,k for the ISE datapath, so the same share-recombine event is
+diluted across $\sim 41\times$ more cycles on the CV32E40X core. The
+per-cycle power density on a general-purpose RISC-V core is also lower than
+on a dedicated PQC datapath. Together these effects predict an
+order-of-magnitude smaller signal, observed.
+\item The leak is broadband. 149 isolated samples cross threshold but the
+ISO 17825 default ``run of 5 consecutive samples'' flag does not trigger.
+This is the signature of a secret-dependent operation that runs across
+many cycles in software rather than firing in a narrow window. It is a
+genuine first-order leak but a wide-band attacker model (e.g.,
+mean-based DPA over the whole trace) would exploit it, whereas a
+narrow-band single-sample template attack would gain less.
+\item Variance ratio is tighter than the masked baseline. SW $|1-r|_{\max} =
+0.0701$ vs. masked ISE $0.0784$. The two unmasked pools have nearly
+identical noise distributions; all the leakage is in the per-sample mean.
+This is the textbook unmasked first-order DPA target.
+\end{itemize}
+
+\subsection{Trace and report file paths}
+
+All paths in this table are relative to the artefact root \texttt{cw305\_artifacts\_mlkem\_sw\_v1/} (so each row is reachable by \texttt{cd cw305\_artifacts\_mlkem\_sw\_v1 \&\& cat <row>}). The sibling ISE artefact \texttt{cw305\_artifacts\_2026\_05\_15/} is reached via \texttt{../}.
+
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+SW N=1k setA, setB    & \texttt{\swart{}traces/mlkem\_sw\_widetrig\_n1k/cw305\_mlkem\_sw\_widetrig\_artifactrtl\_set\{A,B\}.npy} \\
+SW N=1k 1o, 2o, vr    & \texttt{\swart{}reports/mlkem\_sw\_widetrig\_n1k/\{tvla\_..\_1o\_t,tvla\_..\_2o\_t,varratio\_..\}.npz} \\
+\midrule
+SW N=10k setA         & \texttt{\swart{}traces/mlkem\_sw\_widetrig\_n10k/cw305\_mlkem\_sw\_widetrig\_artifactrtl\_n10k\_setA.npy} (120\,MB) \\
+SW N=10k setB         & \texttt{\swart{}traces/mlkem\_sw\_widetrig\_n10k/cw305\_mlkem\_sw\_widetrig\_artifactrtl\_n10k\_setB.npy} (120\,MB) \\
+SW N=10k 1o, 2o, vr   & \texttt{\swart{}reports/mlkem\_sw\_widetrig\_n10k/\{tvla\_..\_n10k\_1o\_t, tvla\_..\_n10k\_2o\_t, varratio\_..\_n10k\}.npz} \\
+\midrule
+ISE naive 5k 1o       & \texttt{\isert{}/reports/share\_recombine\_n5k/tvla\_share\_recombine\_naive\_1o\_t.npz} \\
+ISE masked 10k 1o     & \texttt{\isert{}/reports/share\_recombine\_n10k/tvla\_share\_recombine\_masked\_n10k\_1o\_t.npz} \\
+\bottomrule
+\end{tabularx}
+
+\section{Re-derive any number in this document}
+
+\begin{verbatim}
+# SW N=10k 1st-order (ISO 17825-compliant). Run from inside this artefact root.
+python3 -c "
+import numpy as np
+d = np.load('reports/mlkem_sw_widetrig_n10k/'
+            'tvla_mlkem_sw_widetrig_n10k_1o_t.npz')
+t = d['t']
+print(f'post-trigger max|t| = {abs(t[250:]).max():.2f}')
+print(f'N_fixed = {int(d[\"n_fixed\"])}, N_random = {int(d[\"n_random\"])}')
+"
+\end{verbatim}
+
+The same recipe with \texttt{tvla\_..\_2o\_t.npz} returns the 2nd-order
+$|t|$, and \texttt{varratio\_..npz["ratio"]} returns the variance-ratio
+curve from which \texttt{max|1-r|} is computed.
+
+\section{Pending}
+
+\begin{itemize}
+\item ISE naive and ISE+DOM KeyGen / Encap live cycle counts -- not
+re-measured for this journal; the paper's Decap-only row remains the
+authoritative speed-up reference. Adding these is one probe run away on
+the existing \texttt{cw305\_artifacts\_2026\_05\_15/bitstreams/sca\_pqc\_cw305\_saarinen\_naive\_v2\_*.bit}
+and the \texttt{*\_masked\_v2\_*.bit} when the per-call MBOX protocol there is rerun.
+\item 2nd-order positive control at $N{\geq}10^5$ per pool (Saarinen-PQC
+recommended for the masked side) -- future work.
+\item Pre-silicon (RTeAAL) cross-layer analysis on the SW row -- the
+RTeAAL L1/L3 maps in the main paper are for the ISE configurations only.
+Re-running them with the SW firmware would let us check whether the
+broadband nature of the SW first-order leak shows up as a wide tile
+spread at L3, as the diluted-power-density hypothesis predicts.
+\end{itemize}
+
+\bibliographystyle{IEEEtran}
+\begin{thebibliography}{9}
+\bibitem{saarinen} M.-J.~O.~Saarinen, ``Side-channel test methodology for ML-KEM/ML-DSA,'' HOST WiP, 2025.
+\end{thebibliography}
+
+\end{document}
