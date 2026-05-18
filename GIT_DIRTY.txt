@@ -16,7 +16,6 @@
  M sw/src/masked_poly.c
  M sw/src/mldsa_masked.c
 ?? RUNBOOK_CW305_MASKED.md
-?? c.md
 ?? cw305_artifacts_2026-05-15/
 ?? doc/area_synth_notes.md
 ?? doc/randomness_cycle_budget.md
