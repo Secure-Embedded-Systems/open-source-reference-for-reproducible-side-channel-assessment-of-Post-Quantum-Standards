@@ -15,7 +15,6 @@
  M sw/src/masked_ntt.c
  M sw/src/masked_poly.c
  M sw/src/mldsa_masked.c
-?? .claude/
 ?? RUNBOOK_CW305_MASKED.md
 ?? c.md
 ?? cw305_artifacts_2026-05-15/
