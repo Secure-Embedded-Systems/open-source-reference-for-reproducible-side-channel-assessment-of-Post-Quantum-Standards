@@ -100,3 +100,5 @@ CW305 silicon artefacts for the **pure-software ML-KEM-1024 baseline** (Custom-3
 ### [`pre-silicon-mlkem-tvla/`](pre-silicon-mlkem-tvla/README.md)
 Pre-silicon SCA evaluation framework at **two abstraction layers**: L1 (Yosys-flattened RTL, per-bit Welch-t, N=10k FvR) and L3.5 (XC7A35T routed fabric, per-PIP and per-tile Welch-t projected through Project X-Ray chipdb). Ships the L1 and L3 result NPZ/CSVs, all four CW305 bitstreams (naive/masked × FvR/widetrig), validation scripts that re-derive every paper number from the raw data, and the cross-layer leakage-attribution evidence behind Table tab:presi.
 
+## License
+Unless otherwise noted, everything in this repository is covered by the Apache License, Version 2.0 (see LICENSE for full text).
