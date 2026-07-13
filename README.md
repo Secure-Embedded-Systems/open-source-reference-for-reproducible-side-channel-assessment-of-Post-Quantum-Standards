@@ -111,7 +111,7 @@ Pre-silicon SCA evaluation framework at **two abstraction layers**: L1 (Yosys-fl
 
 ## Citation
 
-If you use these artefacts, please cite both the paper and this repository.
+If you use these artifacts, please cite both the paper and this repository.
 
 **Paper:**
 
