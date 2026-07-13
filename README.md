@@ -1,7 +1,7 @@
 # Open-Source Reference for Reproducible Side-Channel Assessment of Post-Quantum Standards
 
 This repository is the artefact release accompanying the paper
-**[Open-Source Reference for Reproducible Side-Channel Assessment of
+**[Open-Source Reference for Reproducible Side-Channel Assessment ofhttps://github.com/Secure-Embedded-Systems/open-source-reference-for-reproducible-side-channel-assessment-of-Post-Quantum-Standards
 Post-Quantum Standards](paper/oscar_15may26_v1.pdf)** (Dillibabu Shanmugam and
 Patrick Schaumont, Worcester Polytechnic Institute, 2026). The PDF is included
 at [`paper/oscar_15may26_v1.pdf`](paper/oscar_15may26_v1.pdf); see
