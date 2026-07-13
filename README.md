@@ -1,4 +1,13 @@
-# CW305 artefacts — 2026-05-15
+# Open-Source Reference for Reproducible Side-Channel Assessment of Post-Quantum Standards
+
+This repository is the artefact release accompanying the paper
+**[Open-Source Reference for Reproducible Side-Channel Assessment of
+Post-Quantum Standards](paper/oscar_15may26_v1.pdf)** (Dillibabu Shanmugam and
+Patrick Schaumont, Worcester Polytechnic Institute, 2026). The PDF is included
+at [`paper/oscar_15may26_v1.pdf`](paper/oscar_15may26_v1.pdf); see
+[Citation](#citation) below for how to cite the paper and this repository.
+
+## CW305 artefacts — 2026-05-15
 
 Self-contained CW305 (XC7A35T-2FTG256) archive: RTL → bitstream →
 firmware → captured traces → analysis, for two CCA-PC TVLA campaigns
@@ -99,6 +108,38 @@ CW305 silicon artefacts for the **pure-software ML-KEM-1024 baseline** (Custom-3
 
 ### [`pre-silicon-mlkem-tvla/`](pre-silicon-mlkem-tvla/README.md)
 Pre-silicon SCA evaluation framework at **two abstraction layers**: L1 (Yosys-flattened RTL, per-bit Welch-t, N=10k FvR) and L3.5 (XC7A35T routed fabric, per-PIP and per-tile Welch-t projected through Project X-Ray chipdb). Ships the L1 and L3 result NPZ/CSVs, all four CW305 bitstreams (naive/masked × FvR/widetrig), validation scripts that re-derive every paper number from the raw data, and the cross-layer leakage-attribution evidence behind Table tab:presi.
+
+## Citation
+
+If you use these artefacts, please cite both the paper and this repository.
+
+**Paper:**
+
+```bibtex
+@misc{shanmugam2026opensource,
+  author       = {Shanmugam, Dillibabu and Schaumont, Patrick},
+  title        = {Open-Source Reference for Reproducible Side-Channel
+                  Assessment of Post-Quantum Standards},
+  year         = {2026},
+  institution  = {Worcester Polytechnic Institute},
+  note         = {Preprint. Artefacts available at
+                  \url{https://github.com/Secure-Embedded-Systems/open-source-reference-for-reproducible-side-channel-assessment-of-Post-Quantum-Standards}},
+}
+```
+
+**Repository:**
+
+```bibtex
+@misc{shanmugam2026opensourceartifacts,
+  author       = {Shanmugam, Dillibabu and Schaumont, Patrick},
+  title        = {Open-Source Reference for Reproducible Side-Channel
+                  Assessment of Post-Quantum Standards: Artefact Repository},
+  year         = {2026},
+  howpublished = {\url{https://github.com/Secure-Embedded-Systems/open-source-reference-for-reproducible-side-channel-assessment-of-Post-Quantum-Standards}},
+  note         = {CW305 ML-KEM-1024 / ML-DSA-44 side-channel artefacts:
+                  RTL, bitstreams, firmware, traces, and TVLA analysis},
+}
+```
 
 ## License
 Unless otherwise noted, everything in this repository is covered by the Apache License, Version 2.0 (see LICENSE for full text).
